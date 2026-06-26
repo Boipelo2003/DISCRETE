@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISCRETE | The Art of Being Seen Without Being Loud</title>
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <!-- FONTS — preconnect must come before the stylesheet -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- PRELOAD first hero image -->
+<link rel="preload" as="image" href="images/hero1.webp" fetchpriority="high">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<!-- PAGE LOADER — must be first element in body -->
+<div id="pageLoader" class="page-loader">
+    <span class="loader-brand">DISCRETE</span>
+    <div class="loader-bar-track">
+        <div class="loader-bar-fill"></div>
+    </div>
+    <span class="loader-caption">The art of being seen without being loud.</span>
+</div>
+
+<!-- ANNOUNCEMENT BAR (HIGH-END INFINITE LOOP) -->
+<div class="announcement-bar">
+    <div class="marquee-track">
+        <p>🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
+        <!-- The second paragraph mirrors the first to create the optical illusion of an uninterrupted seam -->
+        <p aria-hidden="true">🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
+    </div>
+</div>
+    <!-- PREMIUM NAVIGATION -->
+<nav>
+    <div class="logo">
+        <img src="logo.png" alt="DISCRETE">
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="new-arrivals.html">NEW ARRIVALS</a></li>
+        <li><a href="t-shirts.html">T-SHIRTS</a></li>
+        <li><a href="tracksuits.html">TRACKSUITS</a></li>
+        <li><a href="accessories.html">ACCESSORIES</a></li>
+    </ul>
+
+    <div class="nav-meta">
+        <a href="#stores" title="Store Locator">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1 1 15 0Z"/></svg>
+        </a>
+        <a href="account.html" title="Account">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        </a>
+        <a href="#search" title="Search">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z"/></svg>
+        </a>
+        <a href="#cart" title="Shopping Cart" class="cart-icon-wrapper">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.116 60.116 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
+            <span id="cart-count" class="cart-badge"></span>
+        </a>
+    </div>
+</nav>
+
+    <!-- HERO / LANDING REVELATION -->
+<section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-bg"></div>
+        <div class="hero-bg"></div>
+        <h1>DISCRETE</h1>
+        <p>The art of being seen without being loud.</p>
+        <button class="btn" onclick="document.getElementById('t-shirts').scrollIntoView({behavior: 'smooth'});">Enter The Studio</button>
+    </section>
+
+    <!-- BRAND MANIFESTO SECTION -->
+    <section class="manifesto" id="manifesto">
+        <h2>"True presence isn't about demanding attention. It's about commanding the room through effortless, silent confidence."</h2>
+        <span>Designed for the youth. Built in absolute silence.</span>
+    </section>
+
+
+       <!-- ========== T-SHIRTS SECTION ========== -->
+    <section class="products-section" id="t-shirts">
+    <div class="section-header">
+        <h3>T-SHIRTS — R400</h3>
+        <a href="t-shirts.html" class="view-all-link">VIEW ALL →</a>
+    </div>
+
+    <div class="product-grid">
+    <!-- D01 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- BLACK -->
+     <img src="images/d01-black-front.webp" alt="D01 Black Front" class="is-active" data-color="black" fetchpriority="high">
+        <img src="images/d01-black-back.webp" alt="D01 Black Back"  data-color="black" loading="lazy">
+
+        <!-- WHITE -->
+       <img src="images/d01-white-front.webp"alt="D01 White Front" data-color="white" loading="lazy">
+        <img src="images/d01-white-back.webp" alt="D01 White Back"  data-color="white" loading="lazy">
+
+    </div>
+
+    <!-- SWATCHES -->
+    <div class="colour-swatches">
+        <button type="button" class="swatch active" data-color="black"
+            style="background:#111;"
+            title="Black" aria-label="Black"></button>
+
+        <button type="button" class="swatch" data-color="white"
+            style="background:#f5f5f5; border: 1px solid #aaa;"
+            title="White" aria-label="White"></button>
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+        <h3 class="product-title">D01 — Discrete Earth Guardian Tee</h3>
+        <span class="product-price">R400</span>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="product-actions">
+        <label for="size-d01" class="sr-only">Choose size</label>
+
+        <select id="size-d01" class="size-select">
+            <option value="" disabled selected>SIZE</option>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+        </select>
+
+          <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+
+        <button type="button" class="add-to-cart">
+            Add to Cart
+        </button>
+    </div>
+
+</div>
+
+    <!-- D02 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- FRONT -->
+        <img src="images/d02-front.webp"
+             alt="D02 Front"
+             class="is-active"
+             loading="lazy">
+
+        <!-- BACK -->
+        <img src="images/d02-back.webp"
+             alt="D02 Back"
+             loading="lazy">
+
+    </div>
+
+   <!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D02 — Discrete Archive Tee (Works Graphic)</h3>
+    <span class="product-price">R400</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d02" class="sr-only">Choose size</label>
+    <select id="size-d02" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+
+</div>
+
+        <!-- D03 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- FRONT -->
+        <img src="images/d03-front.webp" alt="D03 Front" class="is-active" loading="lazy">
+           
+
+        <!-- BACK -->
+    <img src="images/d03-back.webp" alt="D03 Back" loading="lazy">
+
+    </div>
+<!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D03 — Discrete Keyholder Tee</h3>
+    <span class="product-price">R400</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d03" class="sr-only">Choose size</label>
+    <select id="size-d03" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+
+</div>
+
+       <!-- D04 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- FRONT -->
+        <img src="images/d04-front.webp"
+             alt="D04 Front"
+             class="is-active"
+             loading="lazy">
+
+        <!-- BACK -->
+        <img src="images/d04-back.webp"
+             alt="D04 Back"
+             loading="lazy">
+
+    </div>
+
+    <!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D04 — Discrete Initial Tee</h3>
+    <span class="product-price">R400</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d04" class="sr-only">Choose size</label>
+    <select id="size-d04" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+
+</div>
+
+      <!-- D05 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- FRONT -->
+        <img src="images/d05-front.webp"
+             alt="D05 Front"
+             class="is-active"
+             loading="lazy">
+
+        <!-- BACK -->
+        <img src="images/d05-back.webp"
+             alt="D05 Back"
+             loading="lazy">
+
+    </div>
+
+    <!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D05 — Discrete Petal Code Tee</h3>
+    <span class="product-price">R400</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d05" class="sr-only">Choose size</label>
+    <select id="size-d05" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+
+</div>
+</section>
+    <!-- ========== TRACKSUITS SECTION ========== -->
+<section class="products-section" id="tracksuits">
+    <div class="section-header">
+        <h3>TRACKSUITS</h3>
+        <a href="tracksuits.html" class="view-all-link">VIEW ALL →</a>
+    </div>
+
+    <div class="product-grid">
+
+    <!-- D06 -->
+<div class="product-card">
+
+  
+ <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+        <img src="images/d06-black-front.webp" alt="D06 Black Front" class="is-active" data-color="black" loading="lazy">
+        <img src="images/d06-black-back.webp"  alt="D06 Black Back"  data-color="black" loading="lazy">
+        <img src="images/d06-blue-front.webp"  alt="D06 Blue Front"  data-color="blue"  loading="lazy">
+        <img src="images/d06-blue-back.webp"   alt="D06 Blue Back"   data-color="blue"  loading="lazy">
+    </div>
+
+    <!-- SWATCHES -->
+    <div class="colour-swatches">
+        <button type="button" class="swatch active" data-color="black"
+            style="background:#111;"
+            title="Black" aria-label="Black"></button>
+        <button type="button" class="swatch" data-color="blue"
+            style="background:#1a3a6b;"
+            title="Blue" aria-label="Blue"></button>
+    </div>
+
+    <!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D06 — Discrete Core Tracksuit</h3>
+    <span class="product-price">R850</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d06" class="sr-only">Choose size</label>
+    <select id="size-d06" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+</div>
+
+        <!-- D07 -->
+<div class="product-card">
+
+    <!-- IMAGE GALLERY -->
+    <div class="product-image product-image--gallery">
+
+        <!-- FRONT -->
+        <img src="images/d07-front.webp"
+             alt="D07 Front"
+             class="is-active"
+             loading="lazy">
+
+        <!-- BACK -->
+        <img src="images/d07-back.webp"
+             alt="D07 Back"
+             loading="lazy">
+
+    </div>
+
+    <!-- INFO -->
+<div class="product-info">
+    <h3 class="product-title">D07 — Discrete Eastside Tracksuit</h3>
+    <span class="product-price">R1000</span>
+</div>
+
+<!-- ACTIONS -->
+<div class="product-actions">
+    <label for="size-d07" class="sr-only">Choose size</label>
+    <select id="size-d07" class="size-select">
+        <option value="" disabled selected>SIZE</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+      <!-- ADD THIS -->
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== ACCESSORIES SECTION ========== -->
+<section class="products-section" id="accessories">
+    <div class="section-header">
+        <h3>ACCESSORIES</h3>
+        <a href="accessories.html" class="view-all-link">VIEW ALL →</a>
+    </div>
+
+    <div class="product-grid">
+
+<!-- D09-->
+       <div class="product-card">
+    <div class="product-image product-image--gallery">
+        <img src="images/discrete-skull-cap.webp" alt="Discrete Skull Cap Front" class="is-active">
+        <img src="images/discrete-skull-cap-back.webp" alt="Discrete Skull Cap Back" loading="lazy">
+    </div>
+    <div class="product-info">
+        <h3 class="product-title">D09 — Discrete Skull Cap</h3>
+        <span class="product-price">R120</span>
+    </div>
+    <div class="product-actions">
+    <input type="hidden" class="size-select" value="One Size">
+    <div class="quantity-selector">
+        <button type="button" class="qty-btn qty-minus">−</button>
+        <span class="qty-value">1</span>
+        <button type="button" class="qty-btn qty-plus">+</button>
+    </div>
+    <button type="button" class="add-to-cart">Add to Cart</button>
+</div>
+</div>
+
+</div> <!-- closes .product-grid -->
+</section>
+<!-- THAT'S IT — no extra stray closing tag here -->
+
+ <!-- ========== STUDIO PERSPECTIVES ========== -->
+<section class="social-proof-section">
+
+    <div class="studio-intro">
+        <span class="studio-label">STUDIO PERSPECTIVES</span>
+        <h2 class="studio-heading">SEEN IN THE STREETS</h2>
+        <a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" 
+           target="_blank" rel="noopener noreferrer" class="studio-ig-handle">
+            @DISCRETE_CLOTHIN ↗
+        </a>
+    </div>
+
+    <div class="studio-grid">
+
+        <!-- Large left image -->
+        <a href="https://www.instagram.com/p/DGWNf2GuRXn/?igsh=emFtYWQ3cWw4MzZu" 
+           target="_blank" rel="noopener noreferrer" class="studio-tile studio-tile--large">
+           <img src="images/hero1.webp" alt="DISCRETE Campaign Look 01" loading="lazy"> 
+            <div class="studio-tile-overlay">
+                <span class="studio-tile-cta">VIEW LOOK →</span>
+            </div>
+        </a>
+
+        <!-- Right column — two stacked -->
+        <div class="studio-col">
+
+            <a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" 
+               target="_blank" rel="noopener noreferrer" class="studio-tile">
+                <img src="images/hero2.webp" alt="DISCRETE Campaign Look 02" loading="lazy">
+                <div class="studio-tile-overlay">
+                    <span class="studio-tile-cta">VIEW LOOK →</span>
+                </div>
+            </a>
+
+            <a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" 
+               target="_blank" rel="noopener noreferrer" class="studio-tile">
+              <img src="images/hero3.webp" alt="DISCRETE Campaign Look 03" loading="lazy">
+                <div class="studio-tile-overlay">
+                    <span class="studio-tile-cta">VIEW LOOK →</span>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+    <!-- ========== NEWSLETTER / PROMO SECTION (GALXBOY STYLE) ========== -->
+       <!-- ========== NEWSLETTER / PROMO SECTION (GALXBOY STYLE) ========== -->
+ <div class="promo-section">
+    <div class="promo-links">
+        <a href="#">EVENTS</a>
+        <span>|</span>
+        <a href="#">COLLABS</a>
+        <span>|</span>
+        <a href="#">PROMOS</a>
+    </div>
+
+    <div class="promo-brand-text">
+        DISCRETE
+    </div>
+
+    <!-- UPDATE THIS BLOCK HERE -->
+    <div class="promo-form">
+        <form id="newsletter-form" style="width: 100%;">
+            <div class="signup-input-group">
+                <input type="email" id="newsletter-email" placeholder="E-MAIL" class="promo-input" required>
+                <button type="submit" class="promo-btn">JOIN THE DISCRETE FAM</button>
+            </div>
+        </form>
+        
+        <!-- Success message sits quietly inside the same container until triggered -->
+        <div id="newsletter-success-msg" class="success-message-block" style="display: none; text-align: center; width: 100%;">
+            <span>THANKS FOR SIGNING UP. WELCOME TO THE STUDIO.</span>
+        </div>
+    </div>
+
+    <div class="promo-help">
+        <span>HI. NEED ANY HELP? </span>
+        <a href="mailto:discreteclothing24@gmail.com" style="color: inherit; font-weight: 700; text-decoration: underline; margin-left: 5px;">EMAIL THE STUDIO</a>
+    </div>
+</div>
+    <!-- HIGH-END FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h4>DISCRETE</h4>
+                <p>The art of being seen without being loud. Premium streetwear tailored for the modern youth.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Collections</h5>
+                <ul>
+                    <li><a href="new-arrivals.html">New Arrivals</a></li>
+                    <li><a href="t-shirts.html">T-Shirts</a></li>
+                    <li><a href="tracksuits.html">Tracksuits</a></li>
+                </ul>
+            </div>
+<div class="footer-links">
+    <h5>Assistance</h5>
+    <ul>
+        <li><a href="sizing-guide.html">Sizing Guide</a></li>
+        <li><a href="shipping.html">Shipping & Returns</a></li>
+        <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
+    </ul>
+</div>
+<div class="footer-links">
+    <h5>Community</h5>
+    <ul>
+        <li><a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="#">Tiktok</a></li>
+        <li><a href="#">The Club</a></li>
+    </ul>
+</div>
+
+        <div class="footer-bottom">
+    <div>© 2026 DISCRETE STUDIO. All Rights Reserved.</div>
+    <div>Designed for the Loud Minority, Built by the Silent Majority.</div>
+    <div style="font-size:11px;color:#555;margin-top:6px;">Website designed by Boipelo Mothibi</div>
+    <a href="admin.html" style="color:transparent;font-size:10px;user-select:none;" tabindex="-1">.</a>
+</div>
+    </footer>
+<!-- CART MODAL OVERLAY -->
+<div class="cart-overlay" id="cartOverlay">
+    <div class="cart-modal">
+        <div class="cart-modal-header">
+            <h4>YOUR CART</h4>
+            <button class="cart-close-btn" id="closeCartBtn">&times;</button>
+        </div>
+
+        <div class="cart-items-container" id="cartItemsContainer">
+            <!-- Items will be dynamically inserted here -->
+            <p class="empty-cart-message">Your cart is empty.</p>
+        </div>
+
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">R0</span>
+            </div>
+            <button class="checkout-btn" onclick="window.location.href='checkout.html'">CHECKOUT</button>
+        </div>
+    </div>
+</div>
+<a href="https://wa.me/27699478580?text=Hi%20DISCRETE%20Studio%2C%20I'm%20inquiring%20about%20an%20item..." 
+   class="whatsapp-float" 
+   target="_blank" 
+   rel="noopener noreferrer" 
+   aria-label="Chat with DISCRETE on WhatsApp">
+    <svg viewBox="0 0 24 24" class="whatsapp-icon">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+</a>
+<button type="button" id="backToTop" class="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" class="arrow-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+</button>
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" aria-hidden="true">
+    <button class="search-close-btn" id="searchCloseBtn" aria-label="Close search">&times;</button>
+    <div class="search-container">
+        <div class="search-input-wrapper">
+            <svg class="search-icon-field" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="SEARCH THE STUDIO..." autocomplete="off" spellcheck="false">
+            <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear">✕</button>
+        </div>
+        <div id="searchResults" class="search-results"></div>
+        <p class="search-hint">PRESS <kbd>ESC</kbd> TO CLOSE</p>
+    </div>
+</div>
+ <script src="js/scripts.js" defer></script>
+</body>
+</html> 

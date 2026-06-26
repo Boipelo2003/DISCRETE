@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOUR CART | DISCRETE</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* cart-page-specific styles (minimal – reuse main variables) */
+        .cart-page {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 120px 20px 60px;
+            min-height: 70vh;
+        }
+        .cart-page h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 20px;
+        }
+        .cart-empty {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 60px 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 20px;
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-item-name {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .cart-item-size {
+            font-size: 11px;
+            color: #737373;
+            text-transform: uppercase;
+        }
+        .cart-item-price {
+            font-weight: 700;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+        .cart-item-remove:hover {
+            color: #000;
+        }
+        .cart-footer {
+            margin-top: 40px;
+            border-top: 1px solid #e5e5e5;
+            padding-top: 30px;
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
+        }
+        .checkout-btn {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checkout-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+        .continue-shopping {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #000;
+            text-decoration: none;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .continue-shopping:hover {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal nav for cart page – back to shop -->
+    <nav style="background: #000; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo">
+            <a href="index.html"><img src="logo.png" alt="DISCRETE" style="height: 52px;"></a>
+        </div>
+        <a href="index.html" style="color: #fff; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px;">← CONTINUE SHOPPING</a>
+    </nav>
+
+    <div class="cart-page">
+        <h1>YOUR CART</h1>
+
+        <div id="cartPageItems">
+            <!-- Dynamic items will be inserted here -->
+        </div>
+    </div>
+
+   <script>
+    // --- Escape helper to prevent XSS ---
+    function esc(str) {
+        return String(str ?? '').replace(/[&<>"']/g, c =>
+            ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]
+        );
+    }
+
+    // --- Read cart from localStorage ---
+    const cart = JSON.parse(localStorage.getItem('discreteCart')) || [];
+    const cartPageItems = document.getElementById('cartPageItems');
+
+    function renderCartPage() {
+        if (!cartPageItems) return;
+
+        if (cart.length === 0) {
+            cartPageItems.innerHTML = `
+                <p class="cart-empty">Your cart is empty.</p>
+                <a href="index.html" class="continue-shopping">← Continue Shopping</a>
+            `;
+            return;
+        }
+
+        let html = '';
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            const priceNum = parseFloat(item.price);
+            total += priceNum;
+
+            // Safely display colour if it exists
+            const colorDisplay = item.color
+                ? ' — ' + esc(item.color.charAt(0).toUpperCase() + item.color.slice(1))
+                : '';
+
+            html += `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${esc(item.name)}</div>
+                        <div class="cart-item-size">Size: ${esc(item.size)}${colorDisplay}</div>
+                    </div>
+                    <div class="cart-item-price">R${priceNum.toFixed(2)}</div>
+                    <button class="cart-item-remove" data-index="${index}" title="Remove item">&times;</button>
+                </div>
+            `;
+        });
+
+        html += `
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span>R${total.toFixed(2)}</span>
+                </div>
+                <button class="checkout-btn" onclick="window.location.href='checkout.html'">CHECKOUT</button>
+                <a href="index.html" class="continue-shopping">← Continue Shopping</a>
+            </div>
+        `;
+
+        cartPageItems.innerHTML = html;
+
+        // Attach remove event listeners
+        document.querySelectorAll('.cart-item-remove').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                cart.splice(idx, 1);
+                localStorage.setItem('discreteCart', JSON.stringify(cart));
+                renderCartPage(); // re-render
+            });
+        });
+    }
+
+    renderCartPage();
+</script>
+</body>
+</html>

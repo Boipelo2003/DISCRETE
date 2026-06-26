@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shipping &amp; Returns | DISCRETE</title>
+  <meta name="description" content="DISCRETE shipping, delivery, and returns policy. Orders dispatched within 2–3 business days. Returns accepted within 7 days." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f5;
+      --mid: #1a1a1a;
+      --line: #2a2a2a;
+      --accent: #f5f5f5;
+      --muted: #888;
+      --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-bar {
+      background: var(--white);
+      color: var(--black);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+    .marquee-track {
+      display: inline-block;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track span { padding: 0 40px; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--black);
+      z-index: 100;
+    }
+    .nav-logo span {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-icons {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .nav-icons a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-icons a:hover { color: var(--white); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 80px 40px 48px;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-header p.eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 60px);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .page-header p.sub {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 480px;
+    }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-block;
+      margin: 32px 40px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--white); }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+
+    /* ── SECTIONS ── */
+    .info-section { margin-bottom: 64px; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 32px;
+    }
+
+    /* ── DELIVERY GRID ── */
+    .delivery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      margin-bottom: 32px;
+    }
+    .delivery-card {
+      background: var(--mid);
+      padding: 28px 24px;
+      border: 1px solid var(--line);
+    }
+    .delivery-card .tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: var(--white);
+      color: var(--black);
+      padding: 3px 8px;
+      margin-bottom: 16px;
+    }
+    .delivery-card h3 {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .delivery-card .price {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+    .delivery-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* ── INFO ROWS ── */
+    .info-row {
+      display: flex;
+      gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
+    }
+    .info-row:first-of-type { border-top: 1px solid var(--line); }
+    .info-row .label {
+      min-width: 200px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-top: 2px;
+    }
+    .info-row .value {
+      font-size: 13px;
+      color: var(--white);
+      line-height: 1.7;
+    }
+    .info-row .value a { color: var(--white); }
+
+    /* ── STEPS ── */
+    .steps { margin-top: 8px; }
+    .step {
+      display: flex;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step .step-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--line);
+      line-height: 1;
+      min-width: 48px;
+    }
+    .step-body h4 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .step-body p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .step-body a { color: var(--white); }
+
+    /* ── NOTICE ── */
+    .notice {
+      margin-top: 48px;
+      padding: 24px 28px;
+      border: 1px solid var(--line);
+      background: var(--mid);
+    }
+    .notice p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .notice p + p { margin-top: 12px; }
+    .notice strong { color: var(--white); font-weight: 700; }
+    .notice a { color: var(--white); }
+
+    /* ── CONTACT BANNER ── */
+    .contact-banner {
+      margin-top: 64px;
+      padding: 40px;
+      border: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .contact-banner div p:first-child {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .contact-banner div p:last-child {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .contact-banner a {
+      display: inline-block;
+      padding: 14px 28px;
+      background: var(--white);
+      color: var(--black);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .contact-banner a:hover { opacity: 0.85; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 56px 40px 32px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-brand p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 12px;
+      max-width: 240px;
+      line-height: 1.8;
+    }
+    .footer-brand strong {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .footer-col ul li a:hover { opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid var(--line);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .page-header { padding: 48px 20px 32px; }
+      .back-link { margin: 24px 20px; }
+      .content { padding: 0 20px 60px; }
+      .info-row { flex-direction: column; gap: 8px; }
+      .info-row .label { min-width: unset; }
+      .contact-banner { flex-direction: column; align-items: flex-start; }
+      footer { grid-template-columns: 1fr 1fr; padding: 40px 20px 24px; }
+      .footer-bottom { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="marquee-track">
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span>DISCRETE</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="new-arrivals.html">New Arrivals</a></li>
+      <li><a href="t-shirts.html">T-Shirts</a></li>
+      <li><a href="tracksuits.html">Tracksuits</a></li>
+      <li><a href="accessories.html">Accessories</a></li>
+    </ul>
+    <div class="nav-icons">
+      <a href="account.html">Account</a>
+      <a href="#cart">Cart</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <p class="eyebrow">Assistance</p>
+    <h1>Shipping &amp; Returns</h1>
+    <p class="sub">We take care of everything after the checkout. Read below to understand how your order gets to you, and what to do if something isn't right.</p>
+  </div>
+
+  <a href="index.html" class="back-link">← Back to Store</a>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- DELIVERY OPTIONS -->
+    <div class="info-section">
+      <p class="section-title">Delivery Options</p>
+      <div class="delivery-grid">
+        <div class="delivery-card">
+          <div class="tag">Standard</div>
+          <h3>Courier Delivery</h3>
+          <div class="price">R80</div>
+          <p>Nationwide delivery via The Courier Guy or PostNet. 3–5 working days after dispatch.</p>
+        </div>
+        <div class="delivery-card">
+          <div class="tag">Free</div>
+          <h3>Free Delivery</h3>
+          <div class="price">R0</div>
+          <p>Free nationwide delivery on all orders over R800. Applied automatically at checkout.</p>
+        </div>
+        <div class="delivery-card">
+          <div class="tag">Local</div>
+          <h3>Collect In Person</h3>
+          <div class="price">Free</div>
+          <p>Collection available by arrangement. Contact us via WhatsApp to organise a pickup time.</p>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">Processing Time</div>
+        <div class="value">Orders are processed and dispatched within 2–3 business days of payment confirmation.</div>
+      </div>
+      <div class="info-row">
+        <div class="label">Tracking</div>
+        <div class="value">You'll receive a tracking number via WhatsApp or email once your order has been dispatched.</div>
+      </div>
+      <div class="info-row">
+        <div class="label">Delivery Areas</div>
+        <div class="value">We ship to all major cities and surrounding areas across South Africa, including Johannesburg, Cape Town, Durban, Pretoria, and Port Elizabeth.</div>
+      </div>
+      <div class="info-row">
+        <div class="label">Public Holidays</div>
+        <div class="value">Orders placed on public holidays or weekends are processed on the next available business day.</div>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="info-section">
+      <p class="section-title">Payment</p>
+      <div class="info-row">
+        <div class="label">Accepted Methods</div>
+        <div class="value">EFT / Direct Bank Transfer. Order via WhatsApp and we'll send you payment details. Order confirmed once proof of payment is received.</div>
+      </div>
+      <div class="info-row">
+        <div class="label">Order Confirmation</div>
+        <div class="value">Send your proof of payment to <a href="mailto:discreteclothing24@gmail.com">discreteclothing24@gmail.com</a> or via WhatsApp. Your order is confirmed once payment is verified.</div>
+      </div>
+    </div>
+
+    <!-- RETURNS -->
+    <div class="info-section">
+      <p class="section-title">Returns &amp; Exchanges</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h4>Check Eligibility</h4>
+            <p>Items must be returned within <strong style="color:var(--white)">7 days</strong> of delivery. Items must be unworn, unwashed, and in their original condition with all tags attached. Sale items and accessories are final sale and cannot be returned.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h4>Contact the Studio</h4>
+            <p>Email <a href="mailto:discreteclothing24@gmail.com">discreteclothing24@gmail.com</a> or message us on <a href="https://wa.me/27699478580" target="_blank">WhatsApp</a> with your order details and reason for return. We'll respond within 1 business day.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h4>Send the Item Back</h4>
+            <p>Once your return is approved, ship the item back to us. Return shipping costs are covered by the customer unless the item is defective or we made an error.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <h4>Refund or Exchange</h4>
+            <p>Once we receive and inspect the item, we'll process your refund or send the replacement size within 3–5 business days. Refunds are issued via EFT to your bank account.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice">
+        <p><strong>Defective or Incorrect Items</strong> — If you receive a defective item or the wrong product, contact us immediately. We will cover all return shipping costs and either replace the item or issue a full refund. Please send photos of the issue via WhatsApp or email.</p>
+        <p><strong>Size Exchanges</strong> — Not sure about your size? Check our <a href="sizing-guide.html">Sizing Guide</a> before ordering. For size exchanges, contact us within 7 days of delivery. Subject to stock availability.</p>
+      </div>
+    </div>
+
+    <!-- CONTACT BANNER -->
+    <div class="contact-banner">
+      <div>
+        <p>Still have questions?</p>
+        <p>Email the Studio</p>
+      </div>
+      <a href="mailto:discreteclothing24@gmail.com">discreteclothing24@gmail.com →</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <strong>DISCRETE</strong>
+      <p>The art of being seen without being loud. Premium streetwear tailored for the modern youth.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Collections</h4>
+      <ul>
+        <li><a href="new-arrivals.html">New Arrivals</a></li>
+        <li><a href="t-shirts.html">T-Shirts</a></li>
+        <li><a href="tracksuits.html">Tracksuits</a></li>
+        <li><a href="accessories.html">Accessories</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Assistance</h4>
+      <ul>
+        <li><a href="sizing-guide.html">Sizing Guide</a></li>
+        <li><a href="shipping.html">Shipping &amp; Returns</a></li>
+        <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/discrete_clothin" target="_blank">Instagram</a></li>
+        <li><a href="https://www.instagram.com/discrete_clothin" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">
+    <span>© 2026 DISCRETE STUDIO. All Rights Reserved.</span>
+    <span>Designed for the Loud Minority, Built by the Silent Majority.</span>
+  </div>
+
+</body>
+</html>

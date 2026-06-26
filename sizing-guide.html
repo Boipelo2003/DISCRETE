@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sizing Guide | DISCRETE</title>
+  <meta name="description" content="Find your perfect fit with the DISCRETE sizing guide for tees, tracksuits, and accessories." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f5;
+      --mid: #1a1a1a;
+      --line: #2a2a2a;
+      --accent: #f5f5f5;
+      --muted: #888;
+      --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-bar {
+      background: var(--white);
+      color: var(--black);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+    .marquee-track {
+      display: inline-block;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track span { padding: 0 40px; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--black);
+      z-index: 100;
+    }
+    .nav-logo img { height: 36px; display: block; }
+    .nav-logo span {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-icons {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .nav-icons a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-icons a:hover { color: var(--white); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 80px 40px 48px;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-header p.eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 60px);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .page-header p.sub {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 480px;
+    }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-block;
+      margin: 32px 40px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--white); }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+
+    /* ── HOW TO MEASURE ── */
+    .measure-section {
+      margin-bottom: 64px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .measure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .measure-card {
+      background: var(--mid);
+      padding: 24px;
+      border: 1px solid var(--line);
+    }
+    .measure-card .num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .measure-card h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .measure-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* ── SIZE TABLES ── */
+    .table-section { margin-bottom: 56px; }
+    .table-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: var(--white);
+      color: var(--black);
+      padding: 4px 10px;
+      margin-bottom: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead tr {
+      border-bottom: 1px solid var(--white);
+    }
+    thead th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--mid); }
+    tbody td {
+      padding: 14px 16px;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+    }
+    tbody td:first-child {
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+    }
+
+    /* ── NOTICE ── */
+    .notice {
+      margin-top: 48px;
+      padding: 24px 28px;
+      border: 1px solid var(--line);
+      background: var(--mid);
+    }
+    .notice p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .notice p strong { color: var(--white); font-weight: 700; }
+    .notice a { color: var(--white); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 56px 40px 32px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-brand p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 12px;
+      max-width: 240px;
+      line-height: 1.8;
+    }
+    .footer-brand strong {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .footer-col ul li a:hover { opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid var(--line);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .page-header { padding: 48px 20px 32px; }
+      .back-link { margin: 24px 20px; }
+      .content { padding: 0 20px 60px; }
+      footer { grid-template-columns: 1fr 1fr; padding: 40px 20px 24px; }
+      .footer-bottom { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
+      table { font-size: 12px; }
+      thead th, tbody td { padding: 10px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="marquee-track">
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+      <span>🔔 NEW EVENTS COMING SOON</span>
+      <span>|</span>
+      <span>FREE DELIVERY ON ORDERS OVER R800</span>
+      <span>|</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span>DISCRETE</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="new-arrivals.html">New Arrivals</a></li>
+      <li><a href="t-shirts.html">T-Shirts</a></li>
+      <li><a href="tracksuits.html">Tracksuits</a></li>
+      <li><a href="accessories.html">Accessories</a></li>
+    </ul>
+    <div class="nav-icons">
+      <a href="account.html">Account</a>
+      <a href="#cart">Cart</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <p class="eyebrow">Assistance</p>
+    <h1>Sizing Guide</h1>
+    <p class="sub">Every piece is cut for fit. Use this guide to find your size before ordering — we want you to feel the fabric the way it was intended.</p>
+  </div>
+
+  <a href="index.html" class="back-link">← Back to Store</a>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- HOW TO MEASURE -->
+    <div class="measure-section">
+      <p class="section-title">How to Measure</p>
+      <div class="measure-grid">
+        <div class="measure-card">
+          <div class="num">01</div>
+          <h3>Chest</h3>
+          <p>Measure around the fullest part of your chest, keeping the tape parallel to the floor. Keep it snug but not tight.</p>
+        </div>
+        <div class="measure-card">
+          <div class="num">02</div>
+          <h3>Length</h3>
+          <p>Measure from the highest point of the shoulder down to the hem. Stand straight and keep the tape flat against the body.</p>
+        </div>
+        <div class="measure-card">
+          <div class="num">03</div>
+          <h3>Waist</h3>
+          <p>Measure around the narrowest part of your natural waist. For tracksuits, measure where the waistband will sit.</p>
+        </div>
+        <div class="measure-card">
+          <div class="num">04</div>
+          <h3>Hips</h3>
+          <p>Measure around the fullest part of your hips, approximately 20cm below your natural waistline.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- T-SHIRTS -->
+    <div class="table-section">
+      <p class="section-title">T-Shirts — D01 through D05</p>
+      <div class="table-label">Tees</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Chest (cm)</th>
+            <th>Length (cm)</th>
+            <th>Shoulder (cm)</th>
+            <th>Sleeve (cm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>XS</td><td>84 – 89</td><td>66</td><td>42</td><td>19</td></tr>
+          <tr><td>S</td><td>89 – 94</td><td>69</td><td>44</td><td>20</td></tr>
+          <tr><td>M</td><td>94 – 99</td><td>71</td><td>46</td><td>21</td></tr>
+          <tr><td>L</td><td>99 – 104</td><td>74</td><td>48</td><td>22</td></tr>
+          <tr><td>XL</td><td>104 – 109</td><td>76</td><td>50</td><td>23</td></tr>
+          <tr><td>XXL</td><td>114 – 119</td><td>79</td><td>53</td><td>24</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRACKSUITS -->
+    <div class="table-section">
+      <p class="section-title">Tracksuits — D06 & D07</p>
+      <div class="table-label">Top</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Chest (cm)</th>
+            <th>Length (cm)</th>
+            <th>Shoulder (cm)</th>
+            <th>Sleeve (cm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>XS</td><td>86 – 91</td><td>64</td><td>43</td><td>60</td></tr>
+          <tr><td>S</td><td>91 – 96</td><td>67</td><td>45</td><td>62</td></tr>
+          <tr><td>M</td><td>96 – 101</td><td>70</td><td>47</td><td>64</td></tr>
+          <tr><td>L</td><td>101 – 106</td><td>72</td><td>49</td><td>65</td></tr>
+          <tr><td>XL</td><td>106 – 111</td><td>74</td><td>51</td><td>67</td></tr>
+          <tr><td>XXL</td><td>116 – 121</td><td>77</td><td>54</td><td>69</td></tr>
+        </tbody>
+      </table>
+      <br/>
+      <div class="table-label">Pants</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Waist (cm)</th>
+            <th>Hips (cm)</th>
+            <th>Inseam (cm)</th>
+            <th>Length (cm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>XS</td><td>68 – 72</td><td>88 – 92</td><td>74</td><td>95</td></tr>
+          <tr><td>S</td><td>72 – 76</td><td>92 – 96</td><td>76</td><td>97</td></tr>
+          <tr><td>M</td><td>76 – 80</td><td>96 – 100</td><td>77</td><td>99</td></tr>
+          <tr><td>L</td><td>80 – 86</td><td>100 – 106</td><td>79</td><td>101</td></tr>
+          <tr><td>XL</td><td>86 – 92</td><td>106 – 112</td><td>80</td><td>103</td></tr>
+          <tr><td>XXL</td><td>96 – 104</td><td>116 – 122</td><td>82</td><td>105</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ACCESSORIES -->
+    <div class="table-section">
+      <p class="section-title">Accessories — Caps</p>
+      <div class="table-label">Headwear</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Sizing</th>
+            <th>Adjustable</th>
+            <th>Fits</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>D08 – Discrete Cap</td><td>One Size</td><td>Yes — snapback</td><td>55 – 61 cm</td></tr>
+          <tr><td>D09 – Discrete Skull Cap</td><td>One Size</td><td>Stretch fit</td><td>54 – 60 cm</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- NOTICE -->
+    <div class="notice">
+      <p>
+        <strong>Between sizes?</strong> Size up for a relaxed street fit, size down for a cleaner, fitted silhouette. All measurements are body measurements, not garment measurements. If you're unsure, email us at <a href="mailto:discreteclothing24@gmail.com">discreteclothing24@gmail.com</a> and we'll help you pick the right size before you order.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <strong>DISCRETE</strong>
+      <p>The art of being seen without being loud. Premium streetwear tailored for the modern youth.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Collections</h4>
+      <ul>
+        <li><a href="new-arrivals.html">New Arrivals</a></li>
+        <li><a href="t-shirts.html">T-Shirts</a></li>
+        <li><a href="tracksuits.html">Tracksuits</a></li>
+        <li><a href="accessories.html">Accessories</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Assistance</h4>
+      <ul>
+        <li><a href="sizing-guide.html">Sizing Guide</a></li>
+        <li><a href="shipping.html">Shipping &amp; Returns</a></li>
+        <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/discrete_clothin" target="_blank">Instagram</a></li>
+        <li><a href="https://www.instagram.com/discrete_clothin" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">
+    <span>© 2026 DISCRETE STUDIO. All Rights Reserved.</span>
+    <span>Designed for the Loud Minority, Built by the Silent Majority.</span>
+  </div>
+
+</body>
+</html>

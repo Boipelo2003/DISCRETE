@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISCRETE | Checkout</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ── CHECKOUT PAGE OVERRIDES ── */
+        /* Remove default body top padding from styles.css so our layout breathes */
+        body {
+            padding-top: 115px; /* keeps content below fixed nav + bar */
+        }
+
+        /* ── CHECKOUT WRAP ── */
+        .co-page {
+            background: #f7f6f4;
+            min-height: calc(100vh - 115px);
+            padding: 48px 20px 80px;
+        }
+
+        .co-wrap {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #e0ddd8;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        /* ── HEADER ── */
+        .co-head {
+            background: #0a0a0a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 28px;
+        }
+        .co-head-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: .2em;
+        }
+        .co-head-lock {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            opacity: .65;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .co-head-lock svg {
+            width: 13px; height: 13px;
+            stroke: currentColor; fill: none;
+            stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* ── STEPS ── */
+        .co-steps {
+            display: flex;
+            border-bottom: 1px solid #e0ddd8;
+            background: #fafaf9;
+        }
+        .co-step {
+            flex: 1; padding: 13px 0;
+            text-align: center; font-size: 11px; font-weight: 600;
+            letter-spacing: .12em; text-transform: uppercase;
+            color: #888; cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all .2s;
+        }
+        .co-step.active { color: #0a0a0a; border-bottom-color: #0a0a0a; }
+        .co-step.done   { color: #2d7a31; }
+        .co-step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #e0ddd8; color: #888; font-size: 9px;
+            margin-right: 7px; transition: all .2s;
+        }
+        .co-step.active .co-step-num { background: #0a0a0a; color: #fff; }
+        .co-step.done   .co-step-num { background: #2d7a31; color: #fff; }
+
+        /* ── PANELS ── */
+        .co-panel { display: none; padding: 28px; }
+        .co-panel.active { display: block; }
+
+        /* ── SECTION LABELS ── */
+        .co-label {
+            font-size: 10px; font-weight: 600; letter-spacing: .18em;
+            text-transform: uppercase; color: #888;
+            margin-bottom: 16px; padding-bottom: 10px;
+            border-bottom: 1px solid #e0ddd8;
+        }
+
+        /* ── FORM GRID ── */
+        .fg { display: grid; gap: 14px; margin-bottom: 22px; }
+        .fg-2 { grid-template-columns: 1fr 1fr; }
+        .fg-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .fgrp { display: flex; flex-direction: column; gap: 5px; }
+        .fgrp label {
+            font-size: 10px; font-weight: 600;
+            letter-spacing: .1em; text-transform: uppercase; color: #888;
+        }
+        .fgrp input, .fgrp select {
+            border: 1px solid #e0ddd8; background: #fff; color: #0a0a0a;
+            padding: 12px 13px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+            outline: none; transition: border .2s; border-radius: 1px;
+            -webkit-appearance: none; appearance: none;
+        }
+        .fgrp input:focus, .fgrp select:focus { border-color: #0a0a0a; }
+        .fgrp input.err, .fgrp select.err { border-color: #c0392b; }
+        .fgrp .sel-wrap { position: relative; }
+        .fgrp .sel-wrap::after {
+            content: '▾'; position: absolute; right: 12px;
+            top: 50%; transform: translateY(-50%);
+            font-size: 10px; pointer-events: none; color: #888;
+        }
+        .fgrp .sel-wrap select { padding-right: 30px; }
+
+        /* ── ORDER SUMMARY ── */
+        .oi-list { margin-bottom: 18px; }
+        .oi {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; padding: 12px 0;
+            border-bottom: 1px solid #e0ddd8; font-size: 13px; gap: 12px;
+        }
+        .oi-name { font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-size: 12px; }
+        .oi-meta { font-size: 11px; color: #888; margin-top: 2px; text-transform: uppercase; }
+        .oi-price { font-weight: 700; white-space: nowrap; font-family: 'DM Mono', monospace; font-size: 13px; }
+        .oi-empty {
+            text-align: center; padding: 30px 0; color: #888;
+            font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+        }
+
+        .totals {
+            background: #fafaf9; border: 1px solid #e0ddd8;
+            padding: 16px 18px; margin-bottom: 22px;
+        }
+        .tot-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+        .tot-row span:first-child { color: #888; }
+        .tot-row.grand {
+            font-size: 15px; font-weight: 700;
+            border-top: 1px solid #0a0a0a; margin-top: 10px; padding-top: 12px;
+        }
+        .tot-row.grand span { color: #0a0a0a; }
+        .tot-val { font-family: 'DM Mono', monospace; }
+
+        /* ── PAYFAST BADGE ── */
+        .pay-badge {
+            display: flex; align-items: flex-start; gap: 10px;
+            background: #f2f8f2; border: 1px solid #c8e0c8;
+            padding: 12px 14px; font-size: 12px; color: #3a6b3a;
+            margin-bottom: 18px; line-height: 1.6; border-radius: 1px;
+        }
+        .pay-badge svg {
+            width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;
+            stroke: #2d7a31; fill: none; stroke-width: 2.2;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .pay-methods { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+        .pm {
+            display: inline-flex; align-items: center; gap: 6px;
+            height: 32px; padding: 0 12px;
+            border-radius: 4px; font-size: 11px; font-weight: 700;
+            white-space: nowrap; user-select: none;
+        }
+        .pm-capitec { background: #004b87; color: #fff; }
+        .pm-apple   { background: #000; color: #fff; font-size: 12px; letter-spacing: .1px; }
+        .pm-google  { background: #fff; border: 1px solid #dadce0; color: #3c4043; }
+        .pm-visa    { background: #1a1f71; color: #fff; font-style: italic; font-size: 14px; letter-spacing: 1px; padding: 0 15px; }
+        .pm-mc      { background: #fff; border: 1px solid #dadce0; color: #2a2a2a; gap: 6px; font-size: 11px; }
+        .g-letter   {
+            font-size: 13px; font-weight: 700;
+            background: linear-gradient(160deg,#4285F4 0%,#EA4335 40%,#FBBC05 70%,#34A853 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── ERROR BOX ── */
+        .err-box {
+            display: none; background: #fff5f5; border: 1px solid #f5c6c6;
+            padding: 11px 14px; font-size: 12px; color: #c0392b;
+            margin-bottom: 16px; line-height: 1.5; border-radius: 1px;
+        }
+        .err-box.show { display: block; }
+
+        /* ── BUTTONS ── */
+        .co-btn {
+            width: 100%; background: #0a0a0a; color: #fff;
+            border: 1px solid #0a0a0a; padding: 15px;
+            font-size: 11px; text-transform: uppercase; letter-spacing: .2em;
+            font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif;
+            transition: all .2s;
+        }
+        .co-btn:hover { background: #fff; color: #0a0a0a; }
+        .co-btn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
+        .co-btn-ghost {
+            background: #fff; color: #0a0a0a; border: 1px solid #e0ddd8;
+            padding: 14px; font-size: 11px; text-transform: uppercase;
+            letter-spacing: .15em; font-weight: 600; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: all .2s;
+            margin-bottom: 10px;
+        }
+        .co-btn-ghost:hover { border-color: #0a0a0a; }
+        .btn-row { display: flex; gap: 10px; }
+        .btn-row .co-btn-ghost { flex: 0 0 120px; }
+        .btn-row .co-btn { flex: 1; }
+
+        /* ── SUCCESS ── */
+        .co-success { display: none; text-align: center; padding: 48px 28px; }
+        .co-success.show { display: block; }
+        .success-ring {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: #e8f5e9; border: 2px solid #2d7a31;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .success-ring svg {
+            width: 28px; height: 28px; stroke: #2d7a31; fill: none;
+            stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .success-hed {
+            font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+            letter-spacing: .15em; margin-bottom: 10px;
+        }
+        .success-sub { font-size: 13px; color: #888; line-height: 1.8; margin-bottom: 20px; }
+        .success-num {
+            display: inline-block; background: #f7f6f4;
+            border: 1px solid #e0ddd8; padding: 10px 18px;
+            font-family: 'DM Mono', monospace; font-size: 12px;
+            font-weight: 500; letter-spacing: .1em; margin-bottom: 28px;
+        }
+        .back-btn {
+            display: inline-block; background: #0a0a0a; color: #fff;
+            padding: 13px 36px; font-size: 11px; text-transform: uppercase;
+            letter-spacing: .2em; font-weight: 700; text-decoration: none;
+            transition: all .2s; cursor: pointer; border: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .back-btn:hover { background: #fff; color: #0a0a0a; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .co-page { padding: 24px 12px 60px; }
+            .co-panel { padding: 20px 16px; }
+            .fg-2, .fg-3 { grid-template-columns: 1fr; }
+            .co-step { font-size: 9px; }
+            .co-step-num { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── ANNOUNCEMENT BAR ── -->
+<div class="announcement-bar">
+    <div class="marquee-track">
+        <p>🔒 SECURE CHECKOUT &nbsp;|&nbsp; FREE DELIVERY OVER R1500 &nbsp;|&nbsp; 🔒 SECURE CHECKOUT &nbsp;|&nbsp; FREE DELIVERY OVER R1500 &nbsp;|&nbsp;</p>
+        <p aria-hidden="true">🔒 SECURE CHECKOUT &nbsp;|&nbsp; FREE DELIVERY OVER R1500 &nbsp;|&nbsp; 🔒 SECURE CHECKOUT &nbsp;|&nbsp; FREE DELIVERY OVER R1500 &nbsp;|&nbsp;</p>
+    </div>
+</div>
+
+<!-- ── NAVIGATION ── -->
+<nav>
+    <div class="logo">
+        <a href="index.html"><img src="logo.png" alt="DISCRETE"></a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="new-arrivals.html">NEW ARRIVALS</a></li>
+        <li><a href="t-shirts.html">T-SHIRTS</a></li>
+        <li><a href="tracksuits.html">TRACKSUITS</a></li>
+        <li><a href="accessories.html">ACCESSORIES</a></li>
+    </ul>
+
+    <div class="nav-meta">
+        <a href="#stores" title="Store Locator">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1 1 15 0Z"/></svg>
+        </a>
+        <a href="account.html" title="Account">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        </a>
+        <a href="index.html#cart" title="Shopping Cart" class="cart-icon-wrapper">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.116 60.116 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
+            <span id="cart-count" class="cart-badge"></span>
+        </a>
+    </div>
+</nav>
+
+<!-- ── CHECKOUT CONTENT ── -->
+<div class="co-page">
+    <h2 class="sr-only">DISCRETE checkout — complete your order in three steps</h2>
+
+    <div class="co-wrap" id="coWrap">
+
+        <!-- CHECKOUT HEADER -->
+        <div class="co-head">
+            <span class="co-head-brand">DISCRETE</span>
+            <span class="co-head-lock">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Secured by PayFast
+            </span>
+        </div>
+
+        <!-- STEPS -->
+        <div class="co-steps">
+            <div class="co-step active" id="stp1"><span class="co-step-num">1</span>Contact</div>
+            <div class="co-step" id="stp2"><span class="co-step-num">2</span>Shipping</div>
+            <div class="co-step" id="stp3"><span class="co-step-num">3</span>Review</div>
+        </div>
+
+        <!-- ERROR BOX -->
+        <div id="errBox" class="err-box" style="margin:0 28px;"></div>
+
+        <!-- ── PANEL 1: CONTACT ── -->
+        <div class="co-panel active" id="pan1">
+            <div class="co-label">Contact Information</div>
+            <div class="fg fg-2">
+                <div class="fgrp"><label>First Name</label><input id="firstName" placeholder="John" autocomplete="given-name"></div>
+                <div class="fgrp"><label>Last Name</label><input id="lastName" placeholder="Doe" autocomplete="family-name"></div>
+            </div>
+            <div class="fg">
+                <div class="fgrp"><label>Email Address</label><input id="email" type="email" placeholder="john@example.com" autocomplete="email"></div>
+                <div class="fgrp"><label>Phone Number</label><input id="phone" type="tel" placeholder="071 000 0000" autocomplete="tel"></div>
+            </div>
+            <button class="co-btn" id="nextBtn1">Continue to Shipping →</button>
+        </div>
+
+        <!-- ── PANEL 2: SHIPPING ── -->
+        <div class="co-panel" id="pan2">
+            <div class="co-label">Shipping Address</div>
+            <div class="fg">
+                <div class="fgrp"><label>Street Address</label><input id="address" placeholder="123 Main Street" autocomplete="street-address"></div>
+                <div class="fgrp"><label>Apartment / Suite (optional)</label><input id="address2" placeholder="Apt 4B" autocomplete="address-line2"></div>
+            </div>
+            <div class="fg fg-3">
+                <div class="fgrp" style="grid-column:1/3"><label>City</label><input id="city" placeholder="Johannesburg" autocomplete="address-level2"></div>
+                <div class="fgrp">
+                    <label>Province</label>
+                    <div class="sel-wrap">
+                        <select id="province" autocomplete="address-level1">
+                            <option value="" disabled selected>Select</option>
+                            <option>Gauteng</option><option>Western Cape</option><option>KwaZulu-Natal</option>
+                            <option>Eastern Cape</option><option>Limpopo</option><option>Mpumalanga</option>
+                            <option>North West</option><option>Free State</option><option>Northern Cape</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fg">
+                <div class="fgrp"><label>Postal Code</label><input id="postalCode" placeholder="2000" inputmode="numeric" autocomplete="postal-code"></div>
+            </div>
+            <div class="btn-row">
+                <button class="co-btn-ghost" id="backBtn1">← Back</button>
+                <button class="co-btn" id="nextBtn2">Review Order →</button>
+            </div>
+        </div>
+
+        <!-- ── PANEL 3: REVIEW ── -->
+        <div class="co-panel" id="pan3">
+            <div class="co-label">Order Summary</div>
+            <div class="oi-list" id="oiList"></div>
+            <div class="totals">
+                <div class="tot-row"><span>Subtotal</span><span class="tot-val" id="subDisp">R0.00</span></div>
+                <div class="tot-row"><span>Shipping</span><span class="tot-val" id="shipDisp">R100.00</span></div>
+                <div class="tot-row grand"><span>Total</span><span class="tot-val" id="grandDisp">R0.00</span></div>
+            </div>
+
+            <div class="pay-badge">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>After placing your order you'll be redirected to <strong>PayFast</strong>'s encrypted checkout to complete the transaction.</span>
+            </div>
+
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:10px;">Accepted Methods</div>
+            <div class="pay-methods">
+                <div class="pm pm-capitec">C &nbsp;Capitec Pay</div>
+                <div class="pm pm-apple">
+                    <svg width="12" height="14" viewBox="0 0 13 16" fill="white"><path d="M10.56 8.31c-.02-2.08 1.7-3.08 1.78-3.13-.97-1.42-2.48-1.61-3.01-1.63-1.28-.13-2.5.75-3.15.75-.65 0-1.66-.73-2.73-.71-1.4.02-2.7.81-3.42 2.06C-1.4 8.02-.46 11.6.93 13.56c.66.94 1.44 2 2.46 1.97.99-.04 1.36-.63 2.56-.63 1.19 0 1.53.63 2.57.61 1.06-.02 1.73-.96 2.38-1.91a8.7 8.7 0 0 0 1.08-2.2c-.02-.01-2.35-.9-2.37-3.21l-.01.12zM8.63 2.13C9.14 1.52 9.48.65 9.39-.2c-.75.04-1.68.5-2.22 1.11-.48.54-.9 1.42-.79 2.27.84.06 1.7-.42 2.25-1.05z"/></svg>
+                    Pay
+                </div>
+                <div class="pm pm-google"><span class="g-letter">G</span> Pay</div>
+                <div class="pm pm-visa">VISA</div>
+                <div class="pm pm-mc">
+                    <svg width="30" height="18" viewBox="0 0 34 22" fill="none"><circle cx="12" cy="11" r="10" fill="#EB001B"/><circle cx="22" cy="11" r="10" fill="#F79E1B"/><path d="M17 3.22a10 10 0 0 1 0 15.56A10 10 0 0 1 17 3.22z" fill="#FF5F00"/></svg>
+                    Mastercard
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="co-btn-ghost" id="backBtn2">← Back</button>
+                <button class="co-btn" id="placeBtn">Place Order</button>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="co-success" id="coSuccess">
+            <div class="success-ring">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="success-hed">Order Confirmed</div>
+            <p class="success-sub">Thank you for your order. We've received your details and will be in touch shortly.</p>
+            <div class="success-num" id="orderNum">ORDER #000000</div>
+            <p class="success-sub" style="margin-bottom:28px;">A confirmation will be sent to your email address.</p>
+            <button class="back-btn" onclick="window.location.href='index.html'">Back to Store</button>
+        </div>
+
+    </div><!-- /.co-wrap -->
+</div><!-- /.co-page -->
+
+<!-- ── HIDDEN PAYFAST FORM ── -->
+<!-- PayFast form — fields are injected dynamically by /api/sign before submit -->
+<form id="payfastForm" action="https://www.payfast.co.za/eng/process" method="POST" style="display:none"></form>
+
+<!-- ── FOOTER ── -->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <h4>DISCRETE</h4>
+            <p>The art of being seen without being loud. Premium streetwear tailored for the modern youth.</p>
+        </div>
+        <div class="footer-links">
+            <h5>Collections</h5>
+            <ul>
+                <li><a href="new-arrivals.html">New Arrivals</a></li>
+                <li><a href="t-shirts.html">T-Shirts</a></li>
+                <li><a href="tracksuits.html">Tracksuits</a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h5>Assistance</h5>
+           <ul>
+    <li><a href="sizing-guide.html">Sizing Guide</a></li>
+    <li><a href="shipping.html">Shipping & Returns</a></li>
+    <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
+</ul>
+        </div>
+        <div class="footer-links">
+            <h5>Community</h5>
+            <ul>
+                <li><a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                <li><a href="#">TikTok</a></li>
+                <li><a href="#">The Club</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div>© 2026 DISCRETE STUDIO. All Rights Reserved.</div>
+        <div>Designed for the Loud Minority, Built by the Silent Majority.</div>
+    </div>
+</footer>
+
+<!-- ── WHATSAPP FLOAT ── -->
+<a href="https://wa.me/27699478580?text=Hi%20DISCRETE%20Studio%2C%20I'm%20inquiring%20about%20an%20item..."
+   class="whatsapp-float"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Chat with DISCRETE on WhatsApp">
+    <svg viewBox="0 0 24 24" class="whatsapp-icon">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+</a>
+
+<!-- ── BACK TO TOP ── -->
+<button type="button" id="backToTop" class="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" class="arrow-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+</button>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/scripts.js"></script>
+
+<script>
+// ── ESCAPE HELPER (prevents XSS from tampered localStorage) ──
+function esc(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]
+    );
+}
+
+// ── CHECKOUT LOGIC ──
+(function () {
+    const SHIP = 100;
+    const cart = (() => {
+        try { return JSON.parse(localStorage.getItem('discreteCart')) || []; }
+        catch(e) { return []; }
+    })();
+
+    const steps  = [document.getElementById('stp1'), document.getElementById('stp2'), document.getElementById('stp3')];
+    const panels = [document.getElementById('pan1'), document.getElementById('pan2'), document.getElementById('pan3')];
+    const errBox = document.getElementById('errBox');
+
+    let currentStep = 0;
+
+    function goTo(n) {
+        steps.forEach((s, i) => {
+            s.classList.remove('active', 'done');
+            if (i < n) s.classList.add('done');
+            if (i === n) s.classList.add('active');
+        });
+        panels.forEach((p, i) => p.classList.toggle('active', i === n));
+        errBox.classList.remove('show');
+        errBox.textContent = '';
+        currentStep = n;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function v(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    function markErr(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('err');
+    }
+
+    function clearErrs() {
+        document.querySelectorAll('.err').forEach(el => el.classList.remove('err'));
+    }
+
+    function showErr(msg) {
+        errBox.textContent = msg;
+        errBox.classList.add('show');
+        errBox.style.margin = '0 28px 0 28px';
+        setTimeout(() => errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+
+    document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', () => {
+            el.classList.remove('err');
+            errBox.classList.remove('show');
+        });
+    });
+
+    // Step 1 → 2
+    document.getElementById('nextBtn1').addEventListener('click', () => {
+        clearErrs();
+        const missing = [];
+        if (!v('firstName')) { markErr('firstName'); missing.push('First name'); }
+        if (!v('lastName'))  { markErr('lastName');  missing.push('Last name'); }
+        const email = v('email');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { markErr('email'); missing.push('Valid email'); }
+        if (!v('phone'))     { markErr('phone');     missing.push('Phone number'); }
+        if (missing.length)  { showErr('Please complete: ' + missing.join(', ') + '.'); return; }
+        goTo(1);
+    });
+
+    document.getElementById('backBtn1').addEventListener('click', () => goTo(0));
+
+    // Step 2 → 3
+    document.getElementById('nextBtn2').addEventListener('click', () => {
+        clearErrs();
+        const missing = [];
+        if (!v('address'))    { markErr('address');    missing.push('Street address'); }
+        if (!v('city'))       { markErr('city');       missing.push('City'); }
+        if (!v('province'))   { markErr('province');   missing.push('Province'); }
+        if (!v('postalCode')) { markErr('postalCode'); missing.push('Postal code'); }
+        if (missing.length)   { showErr('Please complete: ' + missing.join(', ') + '.'); return; }
+        renderSummary();
+        goTo(2);
+    });
+
+    document.getElementById('backBtn2').addEventListener('click', () => goTo(1));
+
+    // ── RENDER SUMMARY (FIXED: all user-controlled data is escaped) ──
+    function renderSummary() {
+        const list = document.getElementById('oiList');
+        if (!cart.length) {
+            list.innerHTML = '<div class="oi-empty">Your cart is empty.</div>';
+            document.getElementById('grandDisp').textContent = 'R0.00';
+            document.getElementById('subDisp').textContent   = 'R0.00';
+            document.getElementById('placeBtn').disabled = true;
+            return;
+        }
+
+        const grouped = {};
+        cart.forEach(item => {
+            const key = `${item.name}|${item.size}|${item.color || ''}`;
+            if (grouped[key]) { grouped[key].qty++; }
+            else { grouped[key] = { ...item, qty: 1 }; }
+        });
+
+        let sub = 0, html = '';
+        Object.values(grouped).forEach(item => {
+            const p = parseFloat(item.price);
+            const tot = p * item.qty;
+            sub += tot;
+
+            // SAFELY ESCAPE all user-controlled text
+            const safeName  = esc(item.name);
+            const safeSize  = esc(item.size);
+            const safeColor = item.color ? esc(item.color.charAt(0).toUpperCase() + item.color.slice(1)) : '';
+            const colorMeta = safeColor ? ' · ' + safeColor : '';
+            const qtyMeta   = item.qty > 1 ? ' · Qty: ' + item.qty : '';
+
+            html += `<div class="oi">
+                <div>
+                    <div class="oi-name">${safeName}</div>
+                    <div class="oi-meta">Size: ${safeSize}${colorMeta}${qtyMeta}</div>
+                </div>
+                <div class="oi-price">R${tot.toFixed(2)}</div>
+            </div>`;
+        });
+
+        list.innerHTML = html;
+        const grand = sub + SHIP;
+        document.getElementById('subDisp').textContent   = `R${sub.toFixed(2)}`;
+        document.getElementById('shipDisp').textContent  = `R${SHIP.toFixed(2)}`;
+        document.getElementById('grandDisp').textContent = `R${grand.toFixed(2)}`;
+    }
+
+    // ── Place order — signs server-side, then redirects to PayFast ──
+    document.getElementById('placeBtn').addEventListener('click', async () => {
+        const grandEl = document.getElementById('grandDisp');
+        const amount  = parseFloat((grandEl.textContent || '0').replace(/[^0-9.]/g, ''));
+        if (!amount || amount <= 0) {
+            showErr('Your cart is empty. Add items before checking out.');
+            return;
+        }
+
+        const btn = document.getElementById('placeBtn');
+        btn.textContent = 'Processing…';
+        btn.disabled = true;
+
+        const phone     = v('phone').replace(/[^\d]/g, '');
+        const normPhone = phone.length === 10 && phone[0] === '0' ? '27' + phone.slice(1) : phone;
+        const desc      = cart.slice(0, 3).map(i => i.name).join(', ') || 'DISCRETE streetwear';
+        const addr2     = v('address2');
+        const fullAddr  = v('address') + (addr2 ? ', ' + addr2 : '');
+        const addrCity  = v('city') + ', ' + v('province') + ' ' + v('postalCode');
+        const orderId   = 'DSC-' + Math.floor(100000 + Math.random() * 900000);
+
+        // Save pending order to Firestore before redirecting to PayFast
+        try {
+            await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id:       orderId,
+                    status:   'pending',
+                    customer: { firstName: v('firstName'), lastName: v('lastName'), email: v('email'), phone: v('phone') },
+                    shipping: { address: fullAddr, city: v('city'), province: v('province'), postalCode: v('postalCode') },
+                    items:    cart,
+                    total:    amount,
+                    date:     new Date().toISOString()
+                })
+            });
+        } catch(e) { console.warn('[DISCRETE] Could not save pending order:', e); }
+
+        try {
+            // Get server-signed fields (passphrase never touches the browser)
+            const response = await fetch('/api/sign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nameFirst: v('firstName'),
+                    nameLast:  v('lastName'),
+                    email:     v('email'),
+                    phone:     normPhone,
+                    items:     cart,
+                    itemDesc:  desc,
+                    addrLine:  fullAddr,
+                    addrCity:  addrCity,
+                    orderId:   orderId,
+                })
+            });
+            if (!response.ok) throw new Error('Sign request failed');
+            const { fields } = await response.json();
+
+            // Inject signed fields into the empty PayFast form
+            const form = document.getElementById('payfastForm');
+            form.innerHTML = '';
+            Object.entries(fields).forEach(([name, value]) => {
+                const input = document.createElement('input');
+                input.type  = 'hidden';
+                input.name  = name;
+                input.value = value;
+                form.appendChild(input);
+            });
+
+            btn.textContent = 'Redirecting to PayFast…';
+            form.submit();
+
+        } catch(err) {
+            console.error('[DISCRETE] checkout error:', err);
+            btn.textContent = 'Place Order';
+            btn.disabled = false;
+            showErr('Something went wrong. Please try again.');
+        }
+    });
+
+})();
+</script>
+
+</body>
+</html>
