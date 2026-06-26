@@ -169,10 +169,10 @@ function renderCart() {
                 <div class="cart-item">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${safeName}</div>
-                        <div class="cart-item-size">
-                            Size: ${safeSize}
-                            ${safeColor ? ' — ' + safeColor : ''}
-                        </div>
+                       <div class="cart-item-size">
+    ${safeSize ? 'Size: ' + safeSize : ''}
+    ${safeColor ? (safeSize ? ' — ' : '') + safeColor : ''}
+</div>
                     </div>
                     <div class="cart-item-price">R${priceNum.toFixed(2)}</div>
                     <button class="cart-item-remove" data-index="${index}" title="Remove item">&times;</button>
@@ -205,46 +205,61 @@ function renderCart() {
     }
 
 document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function () {
-            const card = this.closest('.product-card');
-            const sizeSelect = card.querySelector('.size-select');
-            const selectedSize = sizeSelect.value;
+    button.addEventListener('click', function () {
+        const card = this.closest('.product-card');
+        const sizeSelect = card.querySelector('.size-select:not(.color-select-dropdown)');
+        const selectedSize = sizeSelect ? sizeSelect.value : null;
 
-            if (!selectedSize) {
-                sizeSelect.classList.add('error');
-                setTimeout(() => sizeSelect.classList.remove('error'), 2000);
-                return;
-            }
-            sizeSelect.classList.remove('error');
+        if (sizeSelect && !selectedSize) {
+            sizeSelect.classList.add('error');
+            setTimeout(() => sizeSelect.classList.remove('error'), 2000);
+            return;
+        }
+        if (sizeSelect) sizeSelect.classList.remove('error');
 
-            const title = card.querySelector('.product-title').textContent.trim();
-            const priceText = card.querySelector('.product-price').textContent;
-            const price = priceText.replace('R', '').trim();
+        const title = card.querySelector('.product-title').textContent.trim();
+        const priceText = card.querySelector('.product-price').textContent;
+        const price = priceText.replace('R', '').trim();
 
             // GET QUANTITY
             const qtyValue = card.querySelector('.qty-value');
             const quantity = qtyValue ? parseInt(qtyValue.textContent) : 1;
 
-            // GET COLOUR
-            let color = null;
-            const activeSwatch = card.querySelector('.swatch.active');
-            if (activeSwatch) color = activeSwatch.dataset.color;
+           // GET COLOUR — supports both dot swatches and <select> dropdowns
+let color = null;
+const activeSwatch = card.querySelector('.swatch.active');
+const colorDropdown = card.querySelector('.color-select-dropdown');
+
+if (activeSwatch) {
+    color = activeSwatch.dataset.color;
+} else if (colorDropdown && colorDropdown.value) {
+    color = colorDropdown.value;
+}
+
+// Validate colour dropdown if present (and no size select to validate)
+if (colorDropdown && !colorDropdown.value) {
+    colorDropdown.classList.add('error');
+    setTimeout(() => colorDropdown.classList.remove('error'), 2000);
+    return;
+}
+
 
             // ADD ITEM WITH QUANTITY
             for (let i = 0; i < quantity; i++) {
-                const item = { name: title, size: selectedSize, price: price };
+                const item = { name: title, price: price };
+if (selectedSize) item.size = selectedSize;
                 if (color) item.color = color;
                 cart.push(item);
             }
 
-            saveCart();
+    saveCart();
             updateCartBadge();
-            showToast(
-                `${title} (${selectedSize}${color ? ', ' + color : ''}) x${quantity} added to cart.`
-            );
+            const sizePart = selectedSize ? selectedSize : '';
+            const colorPart = color ? color : '';
+            const detailPart = [sizePart, colorPart].filter(Boolean).join(', ');
+            showToast(`${title}${detailPart ? ' (' + detailPart + ')' : ''} x${quantity} added to cart.`);
         });
     });
-
     const cartIcon = document.querySelector('a[href="#cart"]');
     if (cartIcon) {
         cartIcon.addEventListener('click', function(e) {
