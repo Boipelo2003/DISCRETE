@@ -236,13 +236,6 @@ if (activeSwatch) {
     color = colorDropdown.value;
 }
 
-// Validate colour dropdown if present (and no size select to validate)
-if (colorDropdown && !colorDropdown.value) {
-    colorDropdown.classList.add('error');
-    setTimeout(() => colorDropdown.classList.remove('error'), 2000);
-    return;
-}
-
 
             // ADD ITEM WITH QUANTITY
             for (let i = 0; i < quantity; i++) {
