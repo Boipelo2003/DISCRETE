@@ -988,7 +988,7 @@
 
             async function updateOrderStatus(orderId, newStatus) {
                 const token = await getIdToken();
-                await fetch('/api/orders', {
+                const res = await fetch('/api/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -996,6 +996,7 @@
                     },
                     body: JSON.stringify({ id: orderId, status: newStatus })
                 });
+                if (!res.ok) throw new Error('Failed to update order status');
             }
 
             function generateOrderId() {
@@ -1033,7 +1034,7 @@
                     cancelled: 'status-badge cancelled'
                 };
                 const label = s.charAt(0).toUpperCase() + s.slice(1);
-                return `<span class="${classes[s] || classes.pending}">${label}</span>`;
+                return `<span class="${classes[s] || classes.pending}">${escapeHtml(label)}</span>`;
             }
 
             // ─── RENDER DASHBOARD ─────────────────────────────────────
@@ -1069,9 +1070,9 @@
 
                 // Stats (all orders, unfiltered)
                 const totalOrders   = allOrders.length;
-                const totalRevenue = allOrders
-    .filter(o => ['paid', 'shipped', 'delivered'].includes((o.status || 'pending').toLowerCase()))
-    .reduce((sum, o) => sum + (o.total || 0), 0);
+                const totalRevenue  = allOrders
+                    .filter(o => ['paid', 'shipped', 'delivered'].includes((o.status || 'pending').toLowerCase()))
+                    .reduce((sum, o) => sum + (o.total || 0), 0);
                 const pendingCount  = allOrders.filter(o => (o.status || 'pending') === 'pending').length;
                 const paidCount     = allOrders.filter(o => o.status === 'paid').length;
 
@@ -1121,7 +1122,7 @@ orders.forEach((order, idx) => {
                     <span class="email">${email}</span>
                 </td>
                 <td>
-                    <button class="order-items-toggle" data-target="items-${idx}">${itemSummary}</button>
+                    <button class="order-items-toggle" data-target="items-${idx}" data-count="${items.length}">${itemSummary}</button>
                     <div class="order-items-detail" id="items-${idx}">
                         ${itemsDetailHtml}
                     </div>
@@ -1151,18 +1152,10 @@ orders.forEach((order, idx) => {
                         const detail = document.getElementById(targetId);
                         if (detail) {
                             detail.classList.toggle('open');
-                            this.textContent = detail.classList.contains('open') ?
-                                'Hide items' :
-                                this.textContent.replace('Hide', '') + ' item' + (this.textContent
-                                    .includes('items') ? '' : 's');
-                            // fix the text — just toggle between summary and "Hide items"
-                            const count = this.textContent.match(/\d+/);
-                            if (detail.classList.contains('open')) {
-                                this.textContent = 'Hide items';
-                            } else {
-                                this.textContent = (count ? count[0] : '0') + ' item' + (count && Number(
-                                    count[0]) !== 1 ? 's' : '');
-                            }
+                            const count = Number(this.getAttribute('data-count'));
+                            this.textContent = detail.classList.contains('open')
+                                ? 'Hide items'
+                                : count + ' item' + (count !== 1 ? 's' : '');
                         }
                     });
                 });
