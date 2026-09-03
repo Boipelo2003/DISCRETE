@@ -10,9 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         /* ── CHECKOUT PAGE OVERRIDES ── */
-        /* Remove default body top padding from styles.css so our layout breathes */
         body {
-            padding-top: 115px; /* keeps content below fixed nav + bar */
+            padding-top: 115px;
         }
 
         /* ── CHECKOUT WRAP ── */
@@ -70,9 +69,17 @@
             flex: 1; padding: 13px 0;
             text-align: center; font-size: 11px; font-weight: 600;
             letter-spacing: .12em; text-transform: uppercase;
-            color: #888; cursor: pointer;
+            color: #888;
             border-bottom: 2px solid transparent;
             transition: all .2s;
+            user-select: none;
+        }
+        /* Only steps that are "done" become clickable */
+        .co-step.clickable {
+            cursor: pointer;
+        }
+        .co-step.clickable:hover {
+            color: #0a0a0a;
         }
         .co-step.active { color: #0a0a0a; border-bottom-color: #0a0a0a; }
         .co-step.done   { color: #2d7a31; }
@@ -185,7 +192,7 @@
         .err-box {
             display: none; background: #fff5f5; border: 1px solid #f5c6c6;
             padding: 11px 14px; font-size: 12px; color: #c0392b;
-            margin-bottom: 16px; line-height: 1.5; border-radius: 1px;
+            margin: 16px 28px 0; line-height: 1.5; border-radius: 1px;
         }
         .err-box.show { display: block; }
 
@@ -210,39 +217,6 @@
         .btn-row { display: flex; gap: 10px; }
         .btn-row .co-btn-ghost { flex: 0 0 120px; }
         .btn-row .co-btn { flex: 1; }
-
-        /* ── SUCCESS ── */
-        .co-success { display: none; text-align: center; padding: 48px 28px; }
-        .co-success.show { display: block; }
-        .success-ring {
-            width: 64px; height: 64px; border-radius: 50%;
-            background: #e8f5e9; border: 2px solid #2d7a31;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 24px;
-        }
-        .success-ring svg {
-            width: 28px; height: 28px; stroke: #2d7a31; fill: none;
-            stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-        }
-        .success-hed {
-            font-family: 'Bebas Neue', sans-serif; font-size: 32px;
-            letter-spacing: .15em; margin-bottom: 10px;
-        }
-        .success-sub { font-size: 13px; color: #888; line-height: 1.8; margin-bottom: 20px; }
-        .success-num {
-            display: inline-block; background: #f7f6f4;
-            border: 1px solid #e0ddd8; padding: 10px 18px;
-            font-family: 'DM Mono', monospace; font-size: 12px;
-            font-weight: 500; letter-spacing: .1em; margin-bottom: 28px;
-        }
-        .back-btn {
-            display: inline-block; background: #0a0a0a; color: #fff;
-            padding: 13px 36px; font-size: 11px; text-transform: uppercase;
-            letter-spacing: .2em; font-weight: 700; text-decoration: none;
-            transition: all .2s; cursor: pointer; border: none;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .back-btn:hover { background: #fff; color: #0a0a0a; }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
@@ -321,7 +295,7 @@
         </div>
 
         <!-- ERROR BOX -->
-        <div id="errBox" class="err-box" style="margin:0 28px;"></div>
+        <div id="errBox" class="err-box"></div>
 
         <!-- ── PANEL 1: CONTACT ── -->
         <div class="co-panel active" id="pan1">
@@ -403,24 +377,12 @@
             </div>
         </div>
 
-        <!-- SUCCESS -->
-        <div class="co-success" id="coSuccess">
-            <div class="success-ring">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="success-hed">Order Confirmed</div>
-            <p class="success-sub">Thank you for your order. We've received your details and will be in touch shortly.</p>
-            <div class="success-num" id="orderNum">ORDER #000000</div>
-            <p class="success-sub" style="margin-bottom:28px;">A confirmation will be sent to your email address.</p>
-            <button class="back-btn" onclick="window.location.href='index.html'">Back to Store</button>
-        </div>
-
     </div><!-- /.co-wrap -->
 </div><!-- /.co-page -->
 
 <!-- ── HIDDEN PAYFAST FORM ── -->
-<!-- PayFast form — fields are injected dynamically by /api/sign before submit -->
 <form id="payfastForm" action="https://sandbox.payfast.co.za/eng/process" method="POST"></form>
+
 <!-- ── FOOTER ── -->
 <footer>
     <div class="footer-grid">
@@ -481,20 +443,16 @@
 <script src="js/scripts.js"></script>
 
 <script>
-// ── ESCAPE HELPER (prevents XSS from tampered localStorage) ──
-function esc(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c =>
-        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]
-    );
-}
-
 // ── CHECKOUT LOGIC ──
+// esc() is already provided by scripts.js – no need to re-declare it.
+
 (function () {
     const SHIP = 100;
     const cart = (() => {
         try { return JSON.parse(localStorage.getItem('discreteCart')) || []; }
         catch(e) { return []; }
     })();
+    let groupedCart = {};
 
     const steps  = [document.getElementById('stp1'), document.getElementById('stp2'), document.getElementById('stp3')];
     const panels = [document.getElementById('pan1'), document.getElementById('pan2'), document.getElementById('pan3')];
@@ -503,10 +461,15 @@ function esc(str) {
     let currentStep = 0;
 
     function goTo(n) {
+        // Update steps: active, done, and clickable classes
         steps.forEach((s, i) => {
-            s.classList.remove('active', 'done');
-            if (i < n) s.classList.add('done');
-            if (i === n) s.classList.add('active');
+            s.classList.remove('active', 'done', 'clickable');
+            if (i < n) {
+                s.classList.add('done', 'clickable'); // completed steps = clickable
+            }
+            if (i === n) {
+                s.classList.add('active'); // current step
+            }
         });
         panels.forEach((p, i) => p.classList.toggle('active', i === n));
         errBox.classList.remove('show');
@@ -514,6 +477,17 @@ function esc(str) {
         currentStep = n;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // ── Step indicator click handlers ──
+    // The click handler checks idx < currentStep, which is always safe
+    // because clickable is only applied to done steps (idx < currentStep)
+    steps.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+            if (idx < currentStep) {
+                goTo(idx);
+            }
+        });
+    });
 
     function v(id) {
         const el = document.getElementById(id);
@@ -532,7 +506,6 @@ function esc(str) {
     function showErr(msg) {
         errBox.textContent = msg;
         errBox.classList.add('show');
-        errBox.style.margin = '0 28px 0 28px';
         setTimeout(() => errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     }
 
@@ -573,9 +546,10 @@ function esc(str) {
 
     document.getElementById('backBtn2').addEventListener('click', () => goTo(1));
 
-    // ── RENDER SUMMARY (FIXED: all user-controlled data is escaped) ──
+    // ── RENDER SUMMARY ──
     function renderSummary() {
         const list = document.getElementById('oiList');
+        groupedCart = {};
         if (!cart.length) {
             list.innerHTML = '<div class="oi-empty">Your cart is empty.</div>';
             document.getElementById('grandDisp').textContent = 'R0.00';
@@ -584,20 +558,18 @@ function esc(str) {
             return;
         }
 
-        const grouped = {};
         cart.forEach(item => {
             const key = `${item.name}|${item.size}|${item.color || ''}`;
-            if (grouped[key]) { grouped[key].qty++; }
-            else { grouped[key] = { ...item, qty: 1 }; }
+            if (groupedCart[key]) { groupedCart[key].qty++; }
+            else { groupedCart[key] = { ...item, qty: 1 }; }
         });
 
         let sub = 0, html = '';
-        Object.values(grouped).forEach(item => {
+        Object.values(groupedCart).forEach(item => {
             const p = parseFloat(item.price);
             const tot = p * item.qty;
             sub += tot;
 
-            // SAFELY ESCAPE all user-controlled text
             const safeName  = esc(item.name);
             const safeSize  = esc(item.size);
             const safeColor = item.color ? esc(item.color.charAt(0).toUpperCase() + item.color.slice(1)) : '';
@@ -620,7 +592,7 @@ function esc(str) {
         document.getElementById('grandDisp').textContent = `R${grand.toFixed(2)}`;
     }
 
-    // ── Place order — signs server-side, then redirects to PayFast ──
+    // ── Place order (with retries) ──
     document.getElementById('placeBtn').addEventListener('click', async () => {
         const grandEl = document.getElementById('grandDisp');
         const amount  = parseFloat((grandEl.textContent || '0').replace(/[^0-9.]/g, ''));
@@ -641,25 +613,41 @@ function esc(str) {
         const addrCity  = v('city') + ', ' + v('province') + ' ' + v('postalCode');
         const orderId   = 'DSC-' + Math.floor(100000 + Math.random() * 900000);
 
-        // Save pending order to Firestore before redirecting to PayFast
-        try {
-            await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id:       orderId,
-                    status:   'pending',
-                    customer: { firstName: v('firstName'), lastName: v('lastName'), email: v('email'), phone: v('phone') },
-                    shipping: { address: fullAddr, city: v('city'), province: v('province'), postalCode: v('postalCode') },
-                    items:    cart,
-                    total:    amount,
-                    date:     new Date().toISOString()
-                })
-            });
-        } catch(e) { console.warn('[DISCRETE] Could not save pending order:', e); }
+        // ── Save pending order to Firestore (with retries) ──
+        let orderSaved = false;
+        const maxRetries = 3;
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id:       orderId,
+                        status:   'pending',
+                        customer: { firstName: v('firstName'), lastName: v('lastName'), email: v('email'), phone: v('phone') },
+                        shipping: { address: fullAddr, city: v('city'), province: v('province'), postalCode: v('postalCode') },
+                        items:    cart,
+                        total:    amount,
+                        date:     new Date().toISOString()
+                    })
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                orderSaved = true;
+                break;
+            } catch (err) {
+                console.warn(`[DISCRETE] Order save attempt ${attempt}/${maxRetries} failed:`, err);
+                if (attempt === maxRetries) {
+                    btn.textContent = 'Place Order';
+                    btn.disabled = false;
+                    showErr('We\'re having trouble saving your order. Please try again in a moment.');
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            }
+        }
 
+        // ── Get signed PayFast fields ──
         try {
-            // Get server-signed fields (passphrase never touches the browser)
             const response = await fetch('/api/sign', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -678,7 +666,6 @@ function esc(str) {
             if (!response.ok) throw new Error('Sign request failed');
             const { fields } = await response.json();
 
-            // Inject signed fields into the empty PayFast form
             const form = document.getElementById('payfastForm');
             form.innerHTML = '';
             Object.entries(fields).forEach(([name, value]) => {
@@ -689,11 +676,49 @@ function esc(str) {
                 form.appendChild(input);
             });
 
+            const cartSummary = Object.values(groupedCart).map(item => {
+                const lineTotal = (parseFloat(item.price) * item.qty).toFixed(2);
+                const colorPart = item.color ? ' ' + item.color.charAt(0).toUpperCase() + item.color.slice(1) : '';
+                return `• ${item.name}${colorPart} (${item.size}) × ${item.qty} — R${lineTotal}`;
+            }).join('\n');
+            localStorage.setItem('discrete_cart_summary', cartSummary);
+            localStorage.setItem('discrete_cart_total', String(amount));
+
+            // ── Full structured order details for success.html ──
+            // Used to build the WhatsApp message and the downloadable
+            // Tax Invoice PDF (name, shipping address, itemized cart, VAT).
+            const orderDetails = {
+                orderId,
+                date: new Date().toISOString(),
+                customer: {
+                    firstName: v('firstName'),
+                    lastName:  v('lastName'),
+                    email:     v('email'),
+                    phone:     v('phone'),
+                },
+                shipping: {
+                    address:    fullAddr,
+                    city:       v('city'),
+                    province:   v('province'),
+                    postalCode: v('postalCode'),
+                },
+                items: Object.values(groupedCart).map(item => ({
+                    name:  item.name,
+                    size:  item.size,
+                    color: item.color || '',
+                    qty:   item.qty,
+                    price: parseFloat(item.price),
+                })),
+                shippingCost: SHIP,
+                total: amount, // VAT-inclusive, matches what PayFast charges
+            };
+            localStorage.setItem('discrete_last_order', JSON.stringify(orderDetails));
+
             btn.textContent = 'Redirecting to PayFast…';
             form.submit();
 
-        } catch(err) {
-            console.error('[DISCRETE] checkout error:', err);
+        } catch (err) {
+            console.error('[DISCRETE] Checkout error:', err);
             btn.textContent = 'Place Order';
             btn.disabled = false;
             showErr('Something went wrong. Please try again.');
@@ -702,6 +727,5 @@ function esc(str) {
 
 })();
 </script>
-
 </body>
 </html>
