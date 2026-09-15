@@ -47,6 +47,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Attach the order ID to the return URL as a query param, so
+    // payment-success.html knows which order to look up after PayFast
+    // redirects the customer back. PayFast does NOT add this for us —
+    // whatever URL we send here is exactly what it redirects to.
+    const returnUrl = `${RETURN_URL}?m_payment_id=${encodeURIComponent(orderId)}`;
+
     const computedAmount = computeOrderTotal(items);
     if (computedAmount === null) {
       return res.status(400).json({ error: 'Invalid or unrecognized items in cart' });
@@ -55,7 +61,7 @@ export default async function handler(req, res) {
     const fields = {
       merchant_id:      MERCHANT_ID,
       merchant_key:     MERCHANT_KEY,
-      return_url:       RETURN_URL,
+      return_url:       returnUrl,
       cancel_url:       CANCEL_URL,
       notify_url:       NOTIFY_URL,
       name_first:       nameFirst,
