@@ -13,12 +13,25 @@
  * ║       → list all orders — admin-only, verified server-side      ║
  * ║  POST /api/orders                      → save or update order   ║
  * ╚══════════════════════════════════════════════════════════════════╝
+ *
+ * STATUS VOCABULARY (single source of truth):
+ *   'pending'  — order created, payment not yet confirmed
+ *   'complete' — payment confirmed by PayFast ITN, amount verified
+ *   'review'   — payment confirmed BUT amount paid != order total
+ *   'failed' / 'cancelled' — terminal failure states
+ *
+ * 'paid' is accepted on input as a legacy alias for 'complete' and is
+ * normalized below, so both old and new callers land on the same value.
+ * payment-success.html and order-status.js both key off 'complete'.
  */
 
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore }                  from 'firebase-admin/firestore';
 import { getAuth }                       from 'firebase-admin/auth';
 import { computeOrderTotal }             from '../lib/products.js';
+
+// Any input value meaning "payment went through".
+const PAID_ALIASES = ['paid', 'complete'];
 
 function initAdmin() {
   if (!getApps().length) {
@@ -107,16 +120,22 @@ export default async function handler(req, res) {
     const internalSecret = req.headers['x-internal-secret'];
     const isInternal = !!internalSecret && internalSecret === process.env.INTERNAL_API_SECRET;
 
+    // Normalize the incoming status once, up front, so every branch below
+    // (and every later reader) sees one consistent vocabulary.
+    const incomingStatus = typeof status === 'string' ? status.toLowerCase() : status;
+    const isPaidStatus   = PAID_ALIASES.includes(incomingStatus);
+    const normalizedStatus = isPaidStatus ? 'complete' : incomingStatus;
+
     try {
       const ref = db.collection('orders').doc(id);
       const existing = await ref.get();
       const existingData = existing.exists ? existing.data() : null;
 
-      const isNewPendingOrder = !existing.exists && (!status || status === 'pending');
+      const isNewPendingOrder = !existing.exists && (!normalizedStatus || normalizedStatus === 'pending');
       const isHarmlessRetry =
         existing.exists &&
         existingData.status === 'pending' &&
-        (!status || status === 'pending') &&
+        (!normalizedStatus || normalizedStatus === 'pending') &&
         !pfPaymentId;
 
       if (!isNewPendingOrder && !isHarmlessRetry && !isInternal) {
@@ -129,26 +148,32 @@ export default async function handler(req, res) {
 
       if (existing.exists) {
         const update = {};
-        if (status) {
+        if (normalizedStatus) {
           if (
-            status === 'paid' &&
+            isPaidStatus &&
             typeof paidAmount === 'number' &&
             typeof existingData.total === 'number' &&
             Math.abs(paidAmount - existingData.total) > 0.01
           ) {
             // What was actually paid doesn't match this order's real total —
             // flag it for a human instead of silently marking it fulfilled.
+            // This check keys off isPaidStatus (not a single literal word) so
+            // it can't be bypassed by sending 'complete' instead of 'paid'.
             update.status = 'review';
             update.paidAmount = paidAmount;
             console.warn(`[DISCRETE] Amount mismatch on ${id}: paid R${paidAmount}, expected R${existingData.total}`);
           } else {
-            update.status = status;
+            update.status = normalizedStatus;
+            if (isPaidStatus && typeof paidAmount === 'number') {
+              update.paidAmount = paidAmount;
+            }
           }
         }
         if (pfPaymentId) update.pfPaymentId = pfPaymentId;
         update.updatedAt = new Date().toISOString();
         await ref.update(update);
-        return res.status(200).json({ ok: true, action: 'updated' });
+        console.log(`[DISCRETE] Order ${id} updated → status: ${update.status || '(unchanged)'}`);
+        return res.status(200).json({ ok: true, action: 'updated', status: update.status });
       } else {
         const computedTotal = computeOrderTotal(items);
         if (computedTotal === null) {
@@ -156,7 +181,7 @@ export default async function handler(req, res) {
         }
         await ref.set({
           id,
-          status:    status    || 'pending',
+          status:    normalizedStatus || 'pending',
           customer:  customer  || {},
           shipping:  shipping  || {},
           items:     items     || [],
