@@ -188,6 +188,41 @@
             background-clip: text;
         }
 
+        /* ── TERMS CHECKBOX ── */
+        .terms-agree {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            background: #fafaf9;
+            border: 1px solid #e0ddd8;
+            border-radius: 1px;
+        }
+        .terms-agree input[type="checkbox"] {
+            margin-top: 2px;
+            flex-shrink: 0;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+            accent-color: #0a0a0a;
+        }
+        .terms-agree label {
+            cursor: pointer;
+        }
+        .terms-agree a {
+            color: #0a0a0a;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .terms-agree.err {
+            border-color: #c0392b;
+            background: #fff5f5;
+        }
+
         /* ── ERROR BOX ── */
         .err-box {
             display: none; background: #fff5f5; border: 1px solid #f5c6c6;
@@ -371,6 +406,14 @@
                 </div>
             </div>
 
+            <div class="terms-agree" id="termsAgreeBox">
+                <input type="checkbox" id="termsCheck">
+                <label for="termsCheck">
+                    I agree to DISCRETE's <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>,
+                    including that after payment I'll send my order confirmation via WhatsApp so my order can be processed.
+                </label>
+            </div>
+
             <div class="btn-row">
                 <button class="co-btn-ghost" id="backBtn2">← Back</button>
                 <button class="co-btn" id="placeBtn">Place Order</button>
@@ -403,6 +446,7 @@
            <ul>
     <li><a href="sizing-guide.html">Sizing Guide</a></li>
     <li><a href="shipping.html">Shipping & Returns</a></li>
+    <li><a href="terms.html">Terms & Conditions</a></li>
     <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
 </ul>
         </div>
@@ -516,6 +560,11 @@
         });
     });
 
+    document.getElementById('termsCheck').addEventListener('change', function () {
+        document.getElementById('termsAgreeBox').classList.remove('err');
+        errBox.classList.remove('show');
+    });
+
     // Step 1 → 2
     document.getElementById('nextBtn1').addEventListener('click', () => {
         clearErrs();
@@ -598,6 +647,14 @@
         const amount  = parseFloat((grandEl.textContent || '0').replace(/[^0-9.]/g, ''));
         if (!amount || amount <= 0) {
             showErr('Your cart is empty. Add items before checking out.');
+            return;
+        }
+
+        // ── Require Terms & Conditions agreement ──
+        if (!document.getElementById('termsCheck').checked) {
+            document.getElementById('termsAgreeBox').classList.add('err');
+            showErr('Please agree to the Terms & Conditions before placing your order.');
+            document.getElementById('termsAgreeBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
@@ -684,7 +741,7 @@
             localStorage.setItem('discrete_cart_summary', cartSummary);
             localStorage.setItem('discrete_cart_total', String(amount));
 
-            // ── Full structured order details for success.html ──
+            // ── Full structured order details for the success/receipt page ──
             // Used to build the WhatsApp message and the downloadable
             // Tax Invoice PDF (name, shipping address, itemized cart, VAT).
             const orderDetails = {
