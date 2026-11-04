@@ -29,12 +29,6 @@
 .sf-wrap a:focus-visible,.sf-wrap button:focus-visible,.sf-footer-extra a:focus-visible,.sf-footer-extra button:focus-visible,
 .sf-cookie button:focus-visible,.sf-wish-panel button:focus-visible,.sf-cookie-panel button:focus-visible{outline:2px solid #ff3b5c;outline-offset:3px}
 
-/* ---------- account dropdown (appended to body, positioned by JS) ---------- */
-.sf-account-dropdown{position:fixed;z-index:1500;min-width:180px;padding:8px 0;background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.18);display:none}
-.sf-account-dropdown.open{display:block}
-.sf-account-dropdown a{display:block;padding:11px 18px;color:#fff;text-decoration:none;font:400 12px/1 'Space Mono',monospace;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.sf-account-dropdown a:hover,.sf-account-dropdown a:focus-visible{background:rgba(255,255,255,.1)}
-
 /* ---------- wishlist: nav icon, heart buttons, drawer ---------- */
 .sf-wish-link{position:relative}
 .sf-wish-badge{position:absolute;top:-7px;right:-9px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#fff;color:#000;border:1px solid #000;font:700 10px/14px 'Space Mono',monospace;text-align:center;pointer-events:none}
@@ -1065,12 +1059,6 @@
     </div>
 </div>
 
-<!-- ACCOUNT QUICK MENU -->
-<div class="sf-account-dropdown" id="sfAccountDropdown" role="menu" aria-label="Account">
-    <a href="account.html#login" role="menuitem">Log In</a>
-    <a href="account.html#register" role="menuitem">Register</a>
-    <a href="account.html" role="menuitem">My Account</a>
-</div>
 
 <!-- WISHLIST DRAWER -->
 <div class="sf-wish-overlay" id="wishlist" aria-hidden="true">
@@ -1132,27 +1120,6 @@
         get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
         set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked: stay in-memory */ } }
     };
-
-    /* ---------------- ACCOUNT DROPDOWN ---------------- */
-    var accLink = $('.nav-meta a[href="account.html"]');
-    var accMenu = $('#sfAccountDropdown');
-    function closeAcc() { if (accMenu) accMenu.classList.remove('open'); }
-
-    if (accLink && accMenu) {
-        accLink.setAttribute('aria-haspopup', 'true');
-        accLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (accMenu.classList.contains('open')) { closeAcc(); return; }
-            var r = accLink.getBoundingClientRect();
-            accMenu.style.top = (r.bottom + 10) + 'px';
-            accMenu.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + 'px';
-            accMenu.classList.add('open');
-        });
-        document.addEventListener('click', function (e) {
-            if (!accMenu.contains(e.target) && !accLink.contains(e.target)) closeAcc();
-        });
-        window.addEventListener('scroll', closeAcc, { passive: true });
-    }
 
     /* ---------------- WISHLIST ---------------- */
     var WKEY = 'discrete_wishlist';
@@ -1334,7 +1301,6 @@
     /* ---------------- ESC closes everything ---------------- */
     document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
-        closeAcc();
         closeWish();
         closeCookieModal();
     });
