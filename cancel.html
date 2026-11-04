@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISCRETE | Payment Cancelled</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { padding-top: 115px; }
+        .cnl-page {
+            background: #f7f6f4;
+            min-height: calc(100vh - 115px);
+            padding: 48px 20px 80px;
+            display: flex;
+            justify-content: center;
+        }
+        .cnl-wrap {
+            max-width: 560px;
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #e0ddd8;
+            border-radius: 2px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+        .cnl-icon {
+            width: 56px; height: 56px; margin: 0 auto 20px;
+            border-radius: 50%; background: #fff5f5;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cnl-icon svg {
+            width: 26px; height: 26px; stroke: #c0392b; fill: none;
+            stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .cnl-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: .05em;
+            margin-bottom: 8px;
+        }
+        .cnl-sub {
+            font-size: 13px; color: #666; line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .co-btn {
+            display: inline-block; width: 100%; background: #0a0a0a; color: #fff;
+            border: 1px solid #0a0a0a; padding: 15px;
+            font-size: 11px; text-transform: uppercase; letter-spacing: .2em;
+            font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif;
+            transition: all .2s; text-decoration: none; margin-bottom: 12px;
+        }
+        .co-btn:hover { background: #fff; color: #0a0a0a; }
+        .cnl-home {
+            display: inline-block; margin-top: 8px; font-size: 11px;
+            text-transform: uppercase; letter-spacing: .1em; color: #888;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cnl-page">
+    <div class="cnl-wrap">
+        <div class="cnl-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </div>
+        <div class="cnl-title">Payment Cancelled</div>
+        <div class="cnl-sub">
+            No worries — your payment was not completed and you haven't been charged.
+            Your cart is still saved, so you can pick up right where you left off.
+        </div>
+        <a href="checkout.html" class="co-btn">Return to Checkout</a>
+        <br>
+        <a href="index.html" class="cnl-home">← Back to Home</a>
+    </div>
+</div>
+
+</body>
+</html>

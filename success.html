@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISCRETE | Order Confirmed</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { padding-top: 115px; }
+        .conf-page {
+            background: #f7f6f4;
+            min-height: calc(100vh - 115px);
+            padding: 48px 20px 80px;
+            display: flex;
+            justify-content: center;
+        }
+        .conf-wrap {
+            max-width: 560px;
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #e0ddd8;
+            border-radius: 2px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+        .conf-icon {
+            width: 56px; height: 56px; margin: 0 auto 20px;
+            border-radius: 50%; background: #f2f8f2;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .conf-icon svg {
+            width: 28px; height: 28px; stroke: #2d7a31; fill: none;
+            stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .conf-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: .05em;
+            margin-bottom: 8px;
+        }
+        .conf-sub {
+            font-size: 13px; color: #666; line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .conf-order-id {
+            font-family: 'DM Mono', monospace; font-size: 13px;
+            background: #fafaf9; border: 1px solid #e0ddd8;
+            padding: 10px 14px; margin-bottom: 24px; display: inline-block;
+        }
+        .wa-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; width: 100%; background: #25D366; color: #fff;
+            border: none; padding: 15px; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .12em;
+            font-family: 'DM Sans', sans-serif; cursor: pointer;
+            border-radius: 2px; text-decoration: none; margin-bottom: 12px;
+            transition: opacity .2s;
+        }
+        .wa-btn:hover { opacity: .9; }
+        .wa-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .pdf-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; width: 100%; background: #ffffff; color: #0a0a0a;
+            border: 1px solid #0a0a0a; padding: 14px; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .12em;
+            font-family: 'DM Sans', sans-serif; cursor: pointer;
+            border-radius: 2px; text-decoration: none; margin-bottom: 20px;
+            transition: all .2s;
+        }
+        .pdf-btn:hover { background: #0a0a0a; color: #fff; }
+        .pdf-btn svg { width: 16px; height: 16px; }
+        .pdf-btn:disabled { opacity: .5; cursor: not-allowed; }
+        .conf-note {
+            font-size: 11px; color: #999; line-height: 1.6;
+        }
+        .conf-home {
+            display: inline-block; margin-top: 20px; font-size: 11px;
+            text-transform: uppercase; letter-spacing: .1em; color: #888;
+            text-decoration: underline;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="conf-page">
+    <div class="conf-wrap">
+        <div class="conf-icon">
+            <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <div class="conf-title">Payment Successful</div>
+        <div class="conf-sub">
+            Thank you! Your payment went through. Tap the button below to send your
+            order details to us on WhatsApp so we can get it packed and shipped.
+        </div>
+        <div class="conf-order-id" id="orderIdDisp">Order —</div>
+
+        <a href="#" class="wa-btn" id="waBtn" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Send Order via WhatsApp
+        </a>
+
+        <button type="button" class="pdf-btn" id="pdfBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h6"/></svg>
+            Download Tax Invoice (PDF)
+        </button>
+
+        <div class="conf-note">
+            This confirms your order with us directly — please don't skip this step,
+            it's how we know to prepare your package.
+        </div>
+
+        <a href="index.html" class="conf-home">← Back to Home</a>
+    </div>
+</div>
+
+<script>
+(function () {
+    // ── WhatsApp number that receives orders (client's business number) ──
+    const CLIENT_WHATSAPP = '27699478580';
+    const VAT_RATE = 0.15; // South Africa VAT — already included in product prices
+
+    const params  = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id') || 'DSC-UNKNOWN';
+
+    document.getElementById('orderIdDisp').textContent = 'Order ' + orderId;
+
+    // ── Mark order as awaiting confirmation (not proof of payment — see api/complete-order.js) ──
+    if (orderId !== 'DSC-UNKNOWN') {
+        fetch('/api/complete-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId }),
+        }).catch(err => console.warn('[DISCRETE] complete-order call failed:', err));
+        // Fire-and-forget: this shouldn't block or break the customer's
+        // success page if it fails — worst case, the order just stays
+        // 'pending' in Firestore until you check on it manually.
+    }
+
+    // ── Load full order details (name, address, itemized cart) ──
+    let order = null;
+    try {
+        const raw = localStorage.getItem('discrete_last_order');
+        if (raw) order = JSON.parse(raw);
+    } catch (err) {
+        console.warn('[DISCRETE] Could not parse discrete_last_order:', err);
+    }
+
+    // Fallback for older orders placed before this order-details format existed
+    const fallbackSummary = localStorage.getItem('discrete_cart_summary') || '(no item details found)';
+    const fallbackTotal   = parseFloat(localStorage.getItem('discrete_cart_total') || '0');
+
+    const custName    = order ? `${order.customer.firstName} ${order.customer.lastName}`.trim() : 'Customer';
+    const custPhone    = order ? order.customer.phone : '';
+    const custEmail    = order ? order.customer.email : '';
+    const shipAddress = order
+        ? `${order.shipping.address}, ${order.shipping.city}, ${order.shipping.province} ${order.shipping.postalCode}`
+        : '(address not available)';
+    const total = order ? order.total : fallbackTotal;
+
+    // ── VAT breakdown (15% already included in prices) ──
+    const totalExclVat = total / (1 + VAT_RATE);
+    const vatAmount     = total - totalExclVat;
+
+    const itemLines = order
+        ? order.items.map(item => {
+            const lineTotal = (item.price * item.qty).toFixed(2);
+            const colorPart = item.color ? ' ' + item.color.charAt(0).toUpperCase() + item.color.slice(1) : '';
+            return `• ${item.name}${colorPart} (${item.size}) × ${item.qty} — R${lineTotal}`;
+          }).join('\n')
+        : fallbackSummary;
+
+    // ── Build WhatsApp message with full order + customer details ──
+    const message =
+        `Hi DISCRETE! 👋 I've just completed payment for my order.\n\n` +
+        `*Order ID:* ${orderId}\n` +
+        `*Name:* ${custName}\n` +
+        (custPhone ? `*Phone:* ${custPhone}\n` : '') +
+        (custEmail ? `*Email:* ${custEmail}\n` : '') +
+        `*Shipping Address:* ${shipAddress}\n\n` +
+        `*Items:*\n${itemLines}\n\n` +
+        `*Subtotal (excl. VAT):* R${totalExclVat.toFixed(2)}\n` +
+        `*VAT (15%):* R${vatAmount.toFixed(2)}\n` +
+        `*Total Paid (incl. VAT):* R${total.toFixed(2)}\n\n` +
+        `Please confirm and let me know shipping details. Thanks!`;
+
+    const waLink = `https://wa.me/${CLIENT_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    const waBtn  = document.getElementById('waBtn');
+    waBtn.href   = waLink;
+
+    // ── Generate Tax Invoice PDF on click ──
+    document.getElementById('pdfBtn').addEventListener('click', () => {
+        if (!order) {
+            alert('Order details are not available for this session, so a PDF invoice cannot be generated. Your WhatsApp message still has everything we need.');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 48;
+        let y = 60;
+
+        // ── Header ──
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(22);
+        doc.text('DISCRETE', margin, y);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text('TAX INVOICE', pageWidth - margin, y, { align: 'right' });
+        y += 30;
+        doc.setDrawColor(220, 220, 220);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 28;
+
+        // ── Invoice meta ──
+        doc.setFontSize(10);
+        doc.text(`Invoice / Order No: ${orderId}`, margin, y);
+        doc.text(`Date: ${new Date(order.date || Date.now()).toLocaleDateString('en-ZA')}`, pageWidth - margin, y, { align: 'right' });
+        y += 30;
+
+        // ── Bill To ──
+        doc.setFont('helvetica', 'bold');
+        doc.text('Bill To / Ship To', margin, y);
+        y += 16;
+        doc.setFont('helvetica', 'normal');
+        doc.text(custName, margin, y); y += 14;
+        if (custEmail) { doc.text(custEmail, margin, y); y += 14; }
+        if (custPhone) { doc.text(custPhone, margin, y); y += 14; }
+        doc.text(shipAddress, margin, y, { maxWidth: pageWidth - margin * 2 }); y += 30;
+
+        // ── Items table header ──
+        doc.setFont('helvetica', 'bold');
+        doc.text('Item', margin, y);
+        doc.text('Qty', pageWidth - margin - 150, y, { align: 'right' });
+        doc.text('Unit Price', pageWidth - margin - 80, y, { align: 'right' });
+        doc.text('Total', pageWidth - margin, y, { align: 'right' });
+        y += 10;
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 18;
+
+        // ── Items rows ──
+        doc.setFont('helvetica', 'normal');
+        order.items.forEach(item => {
+            const colorPart = item.color ? ` – ${item.color.charAt(0).toUpperCase() + item.color.slice(1)}` : '';
+            const label = `${item.name}${colorPart} (Size ${item.size})`;
+            const lineTotal = (item.price * item.qty).toFixed(2);
+            doc.text(label, margin, y, { maxWidth: pageWidth - margin * 2 - 240 });
+            doc.text(String(item.qty), pageWidth - margin - 150, y, { align: 'right' });
+            doc.text(`R${item.price.toFixed(2)}`, pageWidth - margin - 80, y, { align: 'right' });
+            doc.text(`R${lineTotal}`, pageWidth - margin, y, { align: 'right' });
+            y += 20;
+        });
+
+        y += 10;
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 24;
+
+        // ── Totals ──
+        const itemsTotal = order.items.reduce((s, i) => s + i.price * i.qty, 0);
+        const shippingCost = order.shippingCost || 0;
+
+        const totalsRow = (label, value, bold) => {
+            doc.setFont('helvetica', bold ? 'bold' : 'normal');
+            doc.text(label, pageWidth - margin - 180, y);
+            doc.text(value, pageWidth - margin, y, { align: 'right' });
+            y += 18;
+        };
+
+        totalsRow('Merchandise:', `R${itemsTotal.toFixed(2)}`, false);
+        totalsRow('Shipping:', `R${shippingCost.toFixed(2)}`, false);
+        y += 4;
+        doc.line(pageWidth - margin - 180, y - 12, pageWidth - margin, y - 12);
+        totalsRow('Subtotal (excl. VAT):', `R${totalExclVat.toFixed(2)}`, false);
+        totalsRow('VAT (15%):', `R${vatAmount.toFixed(2)}`, false);
+        y += 4;
+        totalsRow('TOTAL PAID (incl. VAT):', `R${total.toFixed(2)}`, true);
+
+        y += 30;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(140, 140, 140);
+        doc.text('Thank you for shopping with DISCRETE. This invoice confirms payment received — a member of our team', margin, y);
+        y += 12;
+        doc.text('will be in touch on WhatsApp to confirm shipping. VAT is included in all listed prices.', margin, y);
+
+        doc.save(`DISCRETE-Invoice-${orderId}.pdf`);
+    });
+
+    // Clear the cart now that the order is complete
+    localStorage.removeItem('discreteCart');
+    localStorage.removeItem('discrete_cart_summary');
+    localStorage.removeItem('discrete_cart_total');
+    // Keep 'discrete_last_order' until they leave this page, in case they
+    // want to re-download the invoice — cleared when they navigate home.
+    if (typeof updateCartCount === 'function') updateCartCount();
+})();
+</script>
+
+</body>
+</html>

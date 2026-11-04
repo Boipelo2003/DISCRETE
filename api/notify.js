@@ -146,7 +146,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'orders@discrete-silk.vercel.app',
+          from: 'DISCRETE Orders <onboarding@resend.dev>',
           to: process.env.STORE_EMAIL,
           subject: `[DISCRETE] New Order ${mPaymentId} — R${amountGross.toFixed(2)} — ${nameFirst} ${nameLast}`,
           html: `
