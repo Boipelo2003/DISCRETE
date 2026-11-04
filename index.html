@@ -14,6 +14,166 @@
     <!-- PRELOAD first hero image -->
 <link rel="preload" as="image" href="images/hero1.webp" fetchpriority="high">
     <link rel="stylesheet" href="css/styles.css">
+
+    <style id="storefront-additions">
+/* =====================================================================
+   STOREFRONT ADDITIONS — all new classes are prefixed sf- so they never
+   collide with css/styles.css. Colours inherit from the page where possible.
+   ===================================================================== */
+
+/* ---------- shared ---------- */
+.sf-wrap{padding:clamp(48px,7vw,96px) clamp(16px,4vw,48px)}
+.sf-btn{display:inline-block;padding:14px 28px;border:1px solid currentColor;background:transparent;color:inherit;font:700 12px 'Space Mono',monospace;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background .25s,color .25s}
+.sf-btn:hover{background:#fff;color:#000}
+.sf-linklike{background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;text-decoration:underline;cursor:pointer}
+.sf-wrap a:focus-visible,.sf-wrap button:focus-visible,.sf-footer-extra a:focus-visible,.sf-footer-extra button:focus-visible,
+.sf-cookie button:focus-visible,.sf-wish-panel button:focus-visible,.sf-cookie-panel button:focus-visible{outline:2px solid #ff3b5c;outline-offset:3px}
+
+/* ---------- account dropdown (appended to body, positioned by JS) ---------- */
+.sf-account-dropdown{position:fixed;z-index:1500;min-width:180px;padding:8px 0;background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.18);display:none}
+.sf-account-dropdown.open{display:block}
+.sf-account-dropdown a{display:block;padding:11px 18px;color:#fff;text-decoration:none;font:400 12px/1 'Space Mono',monospace;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.sf-account-dropdown a:hover,.sf-account-dropdown a:focus-visible{background:rgba(255,255,255,.1)}
+
+/* ---------- wishlist: nav icon, heart buttons, drawer ---------- */
+.sf-wish-link{position:relative}
+.sf-wish-badge{position:absolute;top:-7px;right:-9px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#fff;color:#000;border:1px solid #000;font:700 10px/14px 'Space Mono',monospace;text-align:center;pointer-events:none}
+.sf-wish-badge:empty{display:none}
+.sf-wish-btn{position:absolute;top:10px;right:10px;z-index:6;width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:transform .2s,background .2s}
+.sf-wish-btn:hover{transform:scale(1.1);background:rgba(0,0,0,.85)}
+.sf-wish-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sf-wish-btn.is-active svg{fill:#ff3b5c;stroke:#ff3b5c}
+
+.sf-wish-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sf-wish-overlay.open{opacity:1;visibility:visible}
+.sf-wish-panel{position:absolute;top:0;right:0;bottom:0;width:min(420px,100%);display:flex;flex-direction:column;background:#0a0a0a;color:#fff;transform:translateX(100%);transition:transform .35s ease}
+.sf-wish-overlay.open .sf-wish-panel{transform:none}
+.sf-wish-head{display:flex;justify-content:space-between;align-items:center;padding:22px 24px;border-bottom:1px solid rgba(255,255,255,.15)}
+.sf-wish-head h4{margin:0;font:400 28px 'Bebas Neue',sans-serif;letter-spacing:.08em}
+.sf-wish-close{background:none;border:0;color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.sf-wish-list{flex:1;overflow-y:auto;padding:8px 24px}
+.sf-wish-empty{margin:32px 0;font:400 13px/1.7 'Space Mono',monospace;opacity:.7}
+.sf-wish-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.sf-wish-row img{width:64px;height:80px;object-fit:cover;background:#1a1a1a}
+.sf-wish-info{flex:1;display:flex;flex-direction:column;gap:6px;font:400 12px/1.4 'Space Mono',monospace}
+.sf-wish-info a{color:#fff;text-decoration:none}
+.sf-wish-info a:hover{text-decoration:underline}
+.sf-wish-info span{opacity:.7}
+.sf-wish-remove{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;opacity:.6}
+.sf-wish-remove:hover{opacity:1}
+.sf-wish-foot{padding:16px 24px;border-top:1px solid rgba(255,255,255,.15);font:400 11px/1.6 'Space Mono',monospace;letter-spacing:.08em;opacity:.7}
+
+/* jump-to-product target highlight */
+.product-card{scroll-margin-top:110px}
+.product-card:target{outline:2px solid #ff3b5c;outline-offset:8px}
+
+/* ---------- category grid ---------- */
+.sf-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.sf-cat-card{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#111;color:#fff;text-decoration:none}
+.sf-cat-card img{width:100%;height:100%;object-fit:cover;filter:grayscale(.25);transition:transform .6s ease,filter .6s ease}
+.sf-cat-card:hover img,.sf-cat-card:focus-visible img{transform:scale(1.06);filter:none}
+.sf-cat-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.78))}
+.sf-cat-label{position:absolute;left:18px;right:18px;bottom:16px;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;font:400 clamp(24px,3vw,38px)/1 'Bebas Neue',sans-serif;letter-spacing:.06em}
+.sf-cat-label small{font:400 11px 'Space Mono',monospace;letter-spacing:.14em}
+
+/* ---------- new arrivals ---------- */
+.sf-na-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.sf-na-card{display:flex;flex-direction:column;gap:12px;color:inherit;text-decoration:none}
+.sf-na-img{position:relative;aspect-ratio:4/5;overflow:hidden;background:#111}
+.sf-na-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.sf-na-card:hover .sf-na-img img{transform:scale(1.05)}
+.sf-na-tag{position:absolute;top:10px;left:10px;padding:4px 9px;background:#fff;color:#000;font:700 10px 'Space Mono',monospace;letter-spacing:.14em}
+.sf-na-meta{display:flex;justify-content:space-between;gap:12px;font:400 12px/1.5 'Space Mono',monospace;letter-spacing:.04em}
+.sf-na-cta{font:700 11px 'Space Mono',monospace;letter-spacing:.16em;text-decoration:underline}
+
+/* ---------- promo banner ---------- */
+.sf-promo{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:32px;margin:0 clamp(16px,4vw,48px);padding:clamp(32px,5vw,64px);background:#f2f2f2;color:#0a0a0a}
+.sf-promo-kicker{font:700 11px 'Space Mono',monospace;letter-spacing:.2em}
+.sf-promo h3{margin:10px 0 14px;font:400 clamp(40px,7vw,96px)/.92 'Bebas Neue',sans-serif;letter-spacing:.03em}
+.sf-promo p{margin:0 0 22px;max-width:46ch;font:400 13px/1.7 'Space Mono',monospace}
+.sf-promo .sf-btn:hover{background:#0a0a0a;color:#fff}
+.sf-promo-art{display:flex;gap:12px}
+.sf-promo-art img{flex:1;min-width:0;aspect-ratio:3/4;object-fit:cover}
+
+/* ---------- trust badges ---------- */
+.sf-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;border-top:1px solid rgba(128,128,128,.35);border-bottom:1px solid rgba(128,128,128,.35)}
+.sf-trust-item{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.sf-trust-item svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sf-trust-item strong{font:400 22px 'Bebas Neue',sans-serif;letter-spacing:.08em}
+.sf-trust-item span{font:400 12px/1.6 'Space Mono',monospace;opacity:.75}
+
+/* ---------- reviews ---------- */
+.sf-reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sf-review{display:flex;flex-direction:column;gap:14px;padding:24px;border:1px solid rgba(128,128,128,.35)}
+.sf-review--placeholder{border-style:dashed}
+.sf-stars{display:flex;gap:3px;color:#f5b301}
+.sf-stars svg{width:16px;height:16px;fill:currentColor}
+.sf-review blockquote{margin:0;font:400 13px/1.8 'Space Mono',monospace}
+.sf-review cite{font:700 11px 'Space Mono',monospace;letter-spacing:.14em;font-style:normal}
+.sf-review-flag{font:400 10px 'Space Mono',monospace;letter-spacing:.12em;opacity:.55}
+
+/* ---------- studio & events ---------- */
+.sf-studio{text-align:center;border-top:1px solid rgba(128,128,128,.35)}
+.sf-studio p{max-width:56ch;margin:0 auto 26px;font:400 13px/1.8 'Space Mono',monospace;opacity:.85}
+.sf-studio-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+/* ---------- newsletter incentive ---------- */
+.sf-incentive{margin:0 0 18px;text-align:center;font:400 clamp(22px,3vw,34px)/1.1 'Bebas Neue',sans-serif;letter-spacing:.1em}
+.sf-incentive small{display:block;margin-top:6px;font:400 11px 'Space Mono',monospace;letter-spacing:.12em;opacity:.7}
+
+/* ---------- footer ---------- */
+.footer-grid{display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:40px}
+.sf-footer-extra{display:flex;flex-direction:column;gap:18px;padding:28px 0 8px;margin-top:28px;border-top:1px solid rgba(128,128,128,.3)}
+.sf-payments{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.sf-pay-label{margin-right:6px;font:400 11px 'Space Mono',monospace;letter-spacing:.16em;opacity:.65}
+.sf-pay{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid rgba(128,128,128,.45);border-radius:4px;font:700 11px 'Space Mono',monospace;letter-spacing:.1em}
+.sf-pay-visa{font-style:italic;font-size:13px;letter-spacing:.04em}
+.sf-pay svg{width:24px;height:16px}
+.sf-legal{display:flex;flex-wrap:wrap;gap:8px 24px;font:400 11px 'Space Mono',monospace;letter-spacing:.12em;text-transform:uppercase}
+.sf-legal a,.sf-legal button{color:inherit;opacity:.75;text-decoration:none}
+.sf-legal a:hover,.sf-legal button:hover{opacity:1;text-decoration:underline}
+.sf-legal button{background:none;border:0;padding:0;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
+
+/* ---------- cookie banner + settings ---------- */
+.sf-cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:3000;max-width:760px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.2);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.sf-cookie[hidden]{display:none}
+.sf-cookie p{flex:1 1 320px;margin:0;font:400 12px/1.7 'Space Mono',monospace}
+.sf-cookie p a{color:#fff}
+.sf-cookie-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sf-cookie button,.sf-cookie-panel button.sf-cbtn{padding:10px 16px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font:700 11px 'Space Mono',monospace;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.sf-cookie button:hover,.sf-cookie-panel button.sf-cbtn:hover{background:rgba(255,255,255,.12)}
+.sf-cookie button.primary,.sf-cookie-panel button.primary{background:#fff;color:#000;border-color:#fff}
+.sf-cookie button.primary:hover,.sf-cookie-panel button.primary:hover{background:#ddd}
+
+.sf-cookie-modal{position:fixed;inset:0;z-index:3100;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.65);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.sf-cookie-modal.open{opacity:1;visibility:visible}
+.sf-cookie-panel{width:min(520px,100%);max-height:90vh;overflow-y:auto;padding:28px;background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.2)}
+.sf-cookie-panel h4{margin:0 0 6px;font:400 30px 'Bebas Neue',sans-serif;letter-spacing:.08em}
+.sf-cookie-panel>p{margin:0 0 18px;font:400 12px/1.7 'Space Mono',monospace;opacity:.75}
+.sf-cookie-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
+.sf-cookie-row strong{display:block;margin-bottom:4px;font:700 12px 'Space Mono',monospace;letter-spacing:.1em}
+.sf-cookie-row span{font:400 11px/1.6 'Space Mono',monospace;opacity:.7}
+.sf-cookie-row input{width:20px;height:20px;margin-top:2px;accent-color:#fff;flex:none}
+.sf-cookie-panel-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* ---------- responsive ---------- */
+@media(max-width:1000px){
+  .sf-trust{grid-template-columns:repeat(2,1fr)}
+  .sf-reviews-grid{grid-template-columns:1fr}
+  .sf-promo{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .sf-cat-grid,.sf-na-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+}
+@media(max-width:520px){
+  .footer-grid{grid-template-columns:1fr}
+  .sf-cookie-actions{width:100%}
+  .sf-cookie-actions button{flex:1}
+}
+
+    </style>
 </head>
 <body>
 <!-- PAGE LOADER — must be first element in body -->
@@ -28,9 +188,9 @@
 <!-- ANNOUNCEMENT BAR (HIGH-END INFINITE LOOP) -->
 <div class="announcement-bar">
     <div class="marquee-track">
-        <p>🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
+        <p>🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; FREE SHIPPING OVER R1000 &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; FREE SHIPPING OVER R1000 &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
         <!-- The second paragraph mirrors the first to create the optical illusion of an uninterrupted seam -->
-        <p aria-hidden="true">🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
+        <p aria-hidden="true">🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; FREE SHIPPING OVER R1000 &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp; 🔔 NEW EVENTS COMING SOON &nbsp;|&nbsp; FREE SHIPPING OVER R1000 &nbsp;|&nbsp; WEBSITE OPEN 24HRS &nbsp;|&nbsp;</p>
     </div>
 </div>
     <!-- PREMIUM NAVIGATION -->
@@ -63,6 +223,10 @@
         <a href="#search" title="Search">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z"/></svg>
         </a>
+        <a href="#wishlist" title="Wishlist" aria-label="Wishlist" class="sf-wish-link">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/></svg>
+            <span id="sfWishBadge" class="sf-wish-badge" aria-live="polite"></span>
+        </a>
         <a href="#cart" title="Shopping Cart" class="cart-icon-wrapper">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.116 60.116 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
             <span id="cart-count" class="cart-badge"></span>
@@ -86,6 +250,63 @@
         <span>Designed for the youth. Built in absolute silence.</span>
     </section>
 
+    <!-- ========== SHOP BY CATEGORY ========== -->
+    <section class="products-section" id="categories">
+        <div class="section-header">
+            <h3>SHOP BY CATEGORY</h3>
+        </div>
+        <div class="sf-cat-grid">
+            <a class="sf-cat-card" href="new-arrivals.html">
+                <img src="images/hero1.webp" alt="New arrivals" loading="lazy">
+                <span class="sf-cat-label">NEW ARRIVALS <small>→</small></span>
+            </a>
+            <a class="sf-cat-card" href="t-shirts.html">
+                <img src="images/d01-black-front.webp" alt="T-shirts" loading="lazy">
+                <span class="sf-cat-label">T-SHIRTS <small>→</small></span>
+            </a>
+            <a class="sf-cat-card" href="tracksuits.html">
+                <img src="images/d06-black-front.webp" alt="Tracksuits" loading="lazy">
+                <span class="sf-cat-label">TRACKSUITS <small>→</small></span>
+            </a>
+            <a class="sf-cat-card" href="accessories.html">
+                <img src="images/dsc-5panel-black.webp" alt="Accessories" loading="lazy">
+                <span class="sf-cat-label">ACCESSORIES <small>→</small></span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ========== NEW ARRIVALS SHOWCASE ==========
+         Each card jumps to the full product card below, where size / quantity / Add to Cart live.
+         Swap the four items to whatever is newest. -->
+    <section class="products-section" id="new-arrivals">
+        <div class="section-header">
+            <h3>NEW ARRIVALS</h3>
+            <a href="new-arrivals.html" class="view-all-link">VIEW ALL →</a>
+        </div>
+        <div class="sf-na-grid">
+            <a class="sf-na-card" href="#product-d13">
+                <div class="sf-na-img"><img src="images/discrete-halo-tee-front.webp" alt="D13 Discrete Halo Tee" loading="lazy"><span class="sf-na-tag">NEW</span></div>
+                <div class="sf-na-meta"><span>D13 — Discrete Halo Tee</span><span>R400</span></div>
+                <span class="sf-na-cta">QUICK VIEW &amp; ADD →</span>
+            </a>
+            <a class="sf-na-card" href="#product-d12">
+                <div class="sf-na-img"><img src="images/dsc-5panel-black.webp" alt="D12 DSC 5 Panel Caps" loading="lazy"><span class="sf-na-tag">NEW</span></div>
+                <div class="sf-na-meta"><span>D12 — DSC 5 Panel Caps</span><span>R200</span></div>
+                <span class="sf-na-cta">QUICK VIEW &amp; ADD →</span>
+            </a>
+            <a class="sf-na-card" href="#product-d07">
+                <div class="sf-na-img"><img src="images/d07-front.webp" alt="D07 Discrete Eastside Tracksuit" loading="lazy"><span class="sf-na-tag">NEW</span></div>
+                <div class="sf-na-meta"><span>D07 — Discrete Eastside Tracksuit</span><span>R1000</span></div>
+                <span class="sf-na-cta">QUICK VIEW &amp; ADD →</span>
+            </a>
+            <a class="sf-na-card" href="#product-d09">
+                <div class="sf-na-img"><img src="images/discrete-skull-cap.webp" alt="D09 Discrete Skull Cap" loading="lazy"><span class="sf-na-tag">NEW</span></div>
+                <div class="sf-na-meta"><span>D09 — Discrete Skull Cap</span><span>R120</span></div>
+                <span class="sf-na-cta">QUICK VIEW &amp; ADD →</span>
+            </a>
+        </div>
+    </section>
+
 
        <!-- ========== T-SHIRTS SECTION ========== -->
     <section class="products-section" id="t-shirts">
@@ -106,7 +327,7 @@
         <img src="images/d01-black-back.webp" alt="D01 Black Back"  data-color="black" loading="lazy">
 
         <!-- WHITE -->
-       <img src="images/d01-white-front.webp"alt="D01 White Front" data-color="white" loading="lazy">
+       <img src="images/d01-white-front.webp" alt="D01 White Front" data-color="white" loading="lazy">
         <img src="images/d01-white-back.webp" alt="D01 White Back"  data-color="white" loading="lazy">
 
     </div>
@@ -246,7 +467,7 @@
 </div>
 
 <!-- D13 -->
-<div class="product-card">
+<div class="product-card" id="product-d13">
 
     <div class="product-image product-image--gallery">
         <img src="images/discrete-halo-tee-front.webp" alt="Discrete Halo Tee Front" class="is-active">
@@ -377,6 +598,7 @@
 </div>
 
 </div>
+</div> <!-- closes T-shirts .product-grid (was previously left open) -->
 </section>
     <!-- ========== TRACKSUITS SECTION ========== -->
 <section class="products-section" id="tracksuits">
@@ -438,7 +660,7 @@
 </div>
 
         <!-- D07 -->
-<div class="product-card">
+<div class="product-card" id="product-d07">
 
     <!-- IMAGE GALLERY -->
     <div class="product-image product-image--gallery">
@@ -487,6 +709,22 @@
 </div>
 </section>
 
+
+<!-- ========== PROMOTIONAL BANNER ==========
+     Add a real discount / end date here when you run one (e.g. "SAVE R50 ON BUNDLES — ENDS SUNDAY"). -->
+<section class="sf-promo" id="promo-banner" aria-label="Bundle offer">
+    <div>
+        <span class="sf-promo-kicker">THE BUNDLE</span>
+        <h3>COMPLETE THE FIT</h3>
+        <p>Pair any tee or tracksuit with a Skull Cap or 5 Panel. Built to be worn together, quietly.</p>
+        <a class="sf-btn" href="accessories.html">SHOP ACCESSORIES →</a>
+    </div>
+    <div class="sf-promo-art" aria-hidden="true">
+        <img src="images/discrete-skull-cap.webp" alt="" loading="lazy">
+        <img src="images/dsc-5panel-pink.webp" alt="" loading="lazy">
+    </div>
+</section>
+
 <!-- ========== ACCESSORIES SECTION ========== -->
 <section class="products-section" id="accessories">
     <div class="section-header">
@@ -497,7 +735,7 @@
     <div class="product-grid">
 
 <!-- D09-->
-       <div class="product-card">
+       <div class="product-card" id="product-d09">
     <div class="product-image product-image--gallery">
         <img src="images/discrete-skull-cap.webp" alt="Discrete Skull Cap Front" class="is-active">
         <img src="images/discrete-skull-cap-back.webp" alt="Discrete Skull Cap Back" loading="lazy">
@@ -518,7 +756,7 @@
 </div>
 
 <!-- D12 — DSC 5 Panel Caps -->
-<div class="product-card">
+<div class="product-card" id="product-d12">
     <div class="product-image product-image--gallery">
         <img src="images/dsc-5panel-black.webp" alt="DSC 5 Panel Cap Black" class="is-active">
         <img src="images/dsc-5panel-pink.webp" alt="DSC 5 Panel Cap Pink" loading="lazy">
@@ -545,6 +783,62 @@
 </div> <!-- closes .product-grid -->
 </section>
 <!-- THAT'S IT — no extra stray closing tag here -->
+
+<!-- ========== TRUST BADGES ========== -->
+<section class="sf-wrap sf-trust" aria-label="Why shop with DISCRETE">
+    <div class="sf-trust-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 6h13v10H1z"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        <strong>FREE SHIPPING</strong>
+        <span>On orders over R1000.</span>
+    </div>
+    <div class="sf-trust-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <strong>SECURE CHECKOUT</strong>
+        <span>Your payment details stay protected.</span>
+    </div>
+    <div class="sf-trust-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+        <strong>EASY RETURNS</strong>
+        <span>Returns &amp; exchanges, explained in our policy.</span>
+    </div>
+    <div class="sf-trust-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+        <strong>WHATSAPP SUPPORT</strong>
+        <span>Questions? Message the studio directly.</span>
+    </div>
+</section>
+
+<!-- ========== CUSTOMER REVIEWS ==========
+     IMPORTANT: the three cards below are PLACEHOLDERS. Replace each with a real customer review
+     (and remove the "sf-review--placeholder" class + the flag line) before launch.
+     Do not publish invented reviews. -->
+<section class="sf-wrap" id="reviews" aria-label="Customer reviews">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="sf-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol></svg>
+    <div class="section-header">
+        <h3>WHAT THE FAM SAYS</h3>
+    </div>
+    <div class="sf-reviews-grid">
+        <article class="sf-review sf-review--placeholder">
+            <div class="sf-stars" role="img" aria-label="5 out of 5 stars"><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg></div>
+            <blockquote>Replace this with a real review from a DISCRETE customer.</blockquote>
+            <cite>— CUSTOMER NAME</cite>
+            <span class="sf-review-flag">PLACEHOLDER — REPLACE BEFORE LAUNCH</span>
+        </article>
+        <article class="sf-review sf-review--placeholder">
+            <div class="sf-stars" role="img" aria-label="5 out of 5 stars"><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg></div>
+            <blockquote>Replace this with a real review from a DISCRETE customer.</blockquote>
+            <cite>— CUSTOMER NAME</cite>
+            <span class="sf-review-flag">PLACEHOLDER — REPLACE BEFORE LAUNCH</span>
+        </article>
+        <article class="sf-review sf-review--placeholder">
+            <div class="sf-stars" role="img" aria-label="5 out of 5 stars"><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg><svg><use href="#sf-star"/></svg></div>
+            <blockquote>Replace this with a real review from a DISCRETE customer.</blockquote>
+            <cite>— CUSTOMER NAME</cite>
+            <span class="sf-review-flag">PLACEHOLDER — REPLACE BEFORE LAUNCH</span>
+        </article>
+    </div>
+</section>
+
 
  <!-- ========== STUDIO PERSPECTIVES ========== -->
 <section class="social-proof-section">
@@ -593,11 +887,23 @@
     </div>
 
 </section>
-    <!-- ========== NEWSLETTER / PROMO SECTION (GALXBOY STYLE) ========== -->
-       <!-- ========== NEWSLETTER / PROMO SECTION (GALXBOY STYLE) ========== -->
+
+<!-- ========== STUDIO & EVENTS (target for the #stores store-locator link) ========== -->
+<section class="sf-wrap sf-studio" id="stores">
+    <div class="section-header" style="justify-content:center;">
+        <h3>STUDIO &amp; EVENTS</h3>
+    </div>
+    <p>Pop-ups, drops and events are announced first on Instagram and through the newsletter. Follow along, or message the studio to ask where we'll be next.</p>
+    <div class="sf-studio-actions">
+        <a class="sf-btn" href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" target="_blank" rel="noopener noreferrer">FOLLOW ON INSTAGRAM ↗</a>
+        <a class="sf-btn" href="https://wa.me/27699478580?text=Hi%20DISCRETE%20Studio%2C%20where%20can%20I%20find%20you%3F" target="_blank" rel="noopener noreferrer">MESSAGE ON WHATSAPP ↗</a>
+    </div>
+</section>
+
+    <!-- ========== NEWSLETTER / PROMO SECTION ========== -->
  <div class="promo-section">
     <div class="promo-links">
-        <a href="#">EVENTS</a>
+        <a href="#stores">EVENTS</a>
         <span>|</span>
         <a href="#">COLLABS</a>
         <span>|</span>
@@ -608,7 +914,8 @@
         DISCRETE
     </div>
 
-    <!-- UPDATE THIS BLOCK HERE -->
+    <p class="sf-incentive">GET 10% OFF YOUR FIRST ORDER<small>JOIN THE LIST FOR DROPS, EVENTS &amp; YOUR WELCOME CODE</small></p>
+
     <div class="promo-form">
         <form id="newsletter-form" style="width: 100%;">
             <div class="signup-input-group">
@@ -619,7 +926,7 @@
         
         <!-- Success message sits quietly inside the same container until triggered -->
         <div id="newsletter-success-msg" class="success-message-block" style="display: none; text-align: center; width: 100%;">
-            <span>THANKS FOR SIGNING UP. WELCOME TO THE STUDIO.</span>
+            <span>THANKS FOR SIGNING UP. WELCOME TO THE STUDIO. YOUR 10% CODE IS ON ITS WAY.</span>
         </div>
     </div>
 
@@ -646,9 +953,20 @@
 <div class="footer-links">
     <h5>Assistance</h5>
     <ul>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="track-order.html">Track Order</a></li>
+        <li><a href="shipping.html">Shipping Details</a></li>
+        <li><a href="shipping.html#returns">Returns &amp; Exchanges</a></li>
         <li><a href="sizing-guide.html">Sizing Guide</a></li>
-        <li><a href="shipping.html">Shipping & Returns</a></li>
-        <li><a href="mailto:discreteclothing24@gmail.com">Contact Studio</a></li>
+        <li><a href="mailto:discreteclothing24@gmail.com">Contact Us</a></li>
+    </ul>
+</div>
+<div class="footer-links">
+    <h5>Company</h5>
+    <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="#stores">Studio &amp; Events</a></li>
+        <li><a href="blog.html">The Journal</a></li>
     </ul>
 </div>
 <div class="footer-links">
@@ -656,9 +974,28 @@
     <ul>
         <li><a href="https://www.instagram.com/discrete_clothin?igsh=MXcyNnM3amw1ZTVlOA==" target="_blank" rel="noopener noreferrer">Instagram</a></li>
         <li><a href="#">Tiktok</a></li>
+        <li><a href="#" target="_blank" rel="noopener noreferrer">Facebook</a></li> <!-- TODO: set real Facebook (and TikTok) URLs -->
         <li><a href="#">The Club</a></li>
     </ul>
 </div>
+
+        </div> <!-- closes .footer-grid (was previously left open) -->
+
+        <div class="sf-footer-extra">
+            <div class="sf-payments" aria-label="Accepted payment methods">
+                <span class="sf-pay-label">WE ACCEPT</span>
+                <span class="sf-pay sf-pay-visa">VISA</span>
+                <span class="sf-pay"><svg viewBox="0 0 24 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#eb001b"/><circle cx="16" cy="8" r="7" fill="#f79e1b" fill-opacity=".9"/></svg>MASTERCARD</span>
+                <span class="sf-pay">PAYFAST</span>
+                <span class="sf-pay">PAYPAL</span>
+            </div>
+            <nav class="sf-legal" aria-label="Legal">
+                <a href="terms.html">Terms &amp; Conditions</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="refund-policy.html">Refund &amp; Cancellation Policy</a>
+                <button type="button" id="sfCookieSettingsBtn">Cookie Settings</button>
+            </nav>
+        </div>
 
         <div class="footer-bottom">
     <div>© 2026 DISCRETE STUDIO. All Rights Reserved.</div>
@@ -718,6 +1055,282 @@
         <p class="search-hint">PRESS <kbd>ESC</kbd> TO CLOSE</p>
     </div>
 </div>
+
+<!-- ACCOUNT QUICK MENU -->
+<div class="sf-account-dropdown" id="sfAccountDropdown" role="menu" aria-label="Account">
+    <a href="account.html#login" role="menuitem">Log In</a>
+    <a href="account.html#register" role="menuitem">Register</a>
+    <a href="account.html" role="menuitem">My Account</a>
+</div>
+
+<!-- WISHLIST DRAWER -->
+<div class="sf-wish-overlay" id="wishlist" aria-hidden="true">
+    <aside class="sf-wish-panel" role="dialog" aria-label="Your wishlist">
+        <div class="sf-wish-head">
+            <h4>YOUR WISHLIST</h4>
+            <button type="button" class="sf-wish-close" id="sfWishClose" aria-label="Close wishlist">&times;</button>
+        </div>
+        <div class="sf-wish-list" id="sfWishList"></div>
+        <div class="sf-wish-foot">SAVED ON THIS DEVICE</div>
+    </aside>
+</div>
+
+<!-- COOKIE CONSENT -->
+<div class="sf-cookie" id="sfCookieBanner" role="dialog" aria-label="Cookie consent" hidden>
+    <p>We use cookies to keep the studio running and to understand how the site is used. Choose what you're happy with. <a href="privacy.html">Privacy Policy</a></p>
+    <div class="sf-cookie-actions">
+        <button type="button" id="sfCookieReject">Reject non-essential</button>
+        <button type="button" id="sfCookieSettings">Settings</button>
+        <button type="button" id="sfCookieAccept" class="primary">Accept all</button>
+    </div>
+</div>
+
+<div class="sf-cookie-modal" id="sfCookieModal" aria-hidden="true">
+    <div class="sf-cookie-panel" role="dialog" aria-modal="true" aria-label="Cookie settings">
+        <h4>COOKIE SETTINGS</h4>
+        <p>Pick which cookies DISCRETE may use. You can change this any time from the footer.</p>
+        <div class="sf-cookie-row">
+            <div><strong>ESSENTIAL</strong><span>Cart, checkout and security. Always on.</span></div>
+            <input type="checkbox" checked disabled aria-label="Essential cookies (always on)">
+        </div>
+        <div class="sf-cookie-row">
+            <div><strong>ANALYTICS</strong><span>Helps us understand which pages and products people use.</span></div>
+            <input type="checkbox" id="sfCookieAnalytics" aria-label="Analytics cookies">
+        </div>
+        <div class="sf-cookie-row">
+            <div><strong>MARKETING</strong><span>Used to show relevant offers on other platforms.</span></div>
+            <input type="checkbox" id="sfCookieMarketing" aria-label="Marketing cookies">
+        </div>
+        <div class="sf-cookie-panel-actions">
+            <button type="button" class="sf-cbtn" id="sfCookieSave">Save choices</button>
+            <button type="button" class="sf-cbtn primary" id="sfCookieAcceptAll">Accept all</button>
+        </div>
+    </div>
+</div>
+
  <script src="js/scripts.js" defer></script>
+ <script id="storefront-additions-js">
+/* =====================================================================
+   STOREFRONT ADDITIONS — account dropdown, wishlist, cookie consent.
+   Self-contained; does not depend on or modify js/scripts.js.
+   ===================================================================== */
+(function () {
+    'use strict';
+
+    var $ = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+    var store = {
+        get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+        set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked: stay in-memory */ } }
+    };
+
+    /* ---------------- ACCOUNT DROPDOWN ---------------- */
+    var accLink = $('.nav-meta a[href="account.html"]');
+    var accMenu = $('#sfAccountDropdown');
+    function closeAcc() { if (accMenu) accMenu.classList.remove('open'); }
+
+    if (accLink && accMenu) {
+        accLink.setAttribute('aria-haspopup', 'true');
+        accLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (accMenu.classList.contains('open')) { closeAcc(); return; }
+            var r = accLink.getBoundingClientRect();
+            accMenu.style.top = (r.bottom + 10) + 'px';
+            accMenu.style.right = Math.max(8, document.documentElement.clientWidth - r.right) + 'px';
+            accMenu.classList.add('open');
+        });
+        document.addEventListener('click', function (e) {
+            if (!accMenu.contains(e.target) && !accLink.contains(e.target)) closeAcc();
+        });
+        window.addEventListener('scroll', closeAcc, { passive: true });
+    }
+
+    /* ---------------- WISHLIST ---------------- */
+    var WKEY = 'discrete_wishlist';
+    var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/></svg>';
+    var wish = [];
+    try { wish = JSON.parse(store.get(WKEY) || '[]'); if (!Array.isArray(wish)) wish = []; } catch (e) { wish = []; }
+
+    var products = {};
+    $$('.product-card').forEach(function (card, i) {
+        var t = $('.product-title', card);
+        var title = t ? t.textContent.trim() : 'Product';
+        var m = title.match(/^(D\d+)/i);
+        var pid = m ? m[1].toUpperCase() : 'ITEM' + (i + 1);
+        var priceEl = $('.product-price', card);
+        var img = $('.product-image img', card);
+
+        if (!card.id) card.id = 'product-' + pid.toLowerCase();
+        products[pid] = {
+            id: pid,
+            title: title,
+            price: priceEl ? priceEl.textContent.trim() : '',
+            img: img ? img.getAttribute('src') : '',
+            card: card
+        };
+
+        if (window.getComputedStyle(card).position === 'static') card.style.position = 'relative';
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'sf-wish-btn';
+        b.setAttribute('data-pid', pid);
+        b.innerHTML = HEART;
+        b.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWish(pid);
+        });
+        card.appendChild(b);
+    });
+
+    var wishOverlay = $('#wishlist');
+    var wishList = $('#sfWishList');
+    var wishBadge = $('#sfWishBadge');
+    var wishLink = $('a[href="#wishlist"]');
+
+    function toggleWish(pid) {
+        var i = wish.indexOf(pid);
+        if (i === -1) wish.push(pid); else wish.splice(i, 1);
+        store.set(WKEY, JSON.stringify(wish));
+        syncWish();
+    }
+
+    function renderWishList() {
+        if (!wishList) return;
+        wishList.textContent = '';
+        var shown = wish.filter(function (pid) { return products[pid]; });
+        if (!shown.length) {
+            var p = document.createElement('p');
+            p.className = 'sf-wish-empty';
+            p.textContent = 'Nothing saved yet. Tap the heart on any piece to save it for later.';
+            wishList.appendChild(p);
+            return;
+        }
+        shown.forEach(function (pid) {
+            var item = products[pid];
+            var row = document.createElement('div');
+            row.className = 'sf-wish-row';
+
+            var im = document.createElement('img');
+            im.src = item.img;
+            im.alt = item.title;
+
+            var info = document.createElement('div');
+            info.className = 'sf-wish-info';
+            var a = document.createElement('a');
+            a.href = '#' + item.card.id;
+            a.textContent = item.title;
+            a.addEventListener('click', closeWish);
+            var pr = document.createElement('span');
+            pr.textContent = item.price;
+            info.appendChild(a);
+            info.appendChild(pr);
+
+            var rm = document.createElement('button');
+            rm.type = 'button';
+            rm.className = 'sf-wish-remove';
+            rm.setAttribute('aria-label', 'Remove ' + item.title + ' from wishlist');
+            rm.textContent = '\u00d7';
+            rm.addEventListener('click', function () { toggleWish(pid); });
+
+            row.appendChild(im);
+            row.appendChild(info);
+            row.appendChild(rm);
+            wishList.appendChild(row);
+        });
+    }
+
+    function syncWish() {
+        $$('.sf-wish-btn').forEach(function (b) {
+            var on = wish.indexOf(b.getAttribute('data-pid')) !== -1;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.setAttribute('aria-label', on ? 'Remove from wishlist' : 'Add to wishlist');
+        });
+        if (wishBadge) {
+            var n = wish.filter(function (pid) { return products[pid]; }).length;
+            wishBadge.textContent = n ? String(n) : '';
+        }
+        renderWishList();
+    }
+
+    function openWish() {
+        if (!wishOverlay) return;
+        wishOverlay.classList.add('open');
+        wishOverlay.setAttribute('aria-hidden', 'false');
+    }
+    function closeWish() {
+        if (!wishOverlay) return;
+        wishOverlay.classList.remove('open');
+        wishOverlay.setAttribute('aria-hidden', 'true');
+    }
+
+    if (wishLink) wishLink.addEventListener('click', function (e) { e.preventDefault(); openWish(); });
+    if (wishOverlay) {
+        wishOverlay.addEventListener('click', function (e) { if (e.target === wishOverlay) closeWish(); });
+        var wc = $('#sfWishClose');
+        if (wc) wc.addEventListener('click', closeWish);
+    }
+    syncWish();
+
+    /* ---------------- COOKIE CONSENT ---------------- */
+    var CKEY = 'discrete_cookie_consent';
+    var banner = $('#sfCookieBanner');
+    var modal = $('#sfCookieModal');
+    var optAnalytics = $('#sfCookieAnalytics');
+    var optMarketing = $('#sfCookieMarketing');
+
+    function readConsent() {
+        try { return JSON.parse(store.get(CKEY)); } catch (e) { return null; }
+    }
+    function saveConsent(analytics, marketing) {
+        var c = { essential: true, analytics: !!analytics, marketing: !!marketing, savedAt: new Date().toISOString() };
+        store.set(CKEY, JSON.stringify(c));
+        /* Other scripts (analytics, pixels) can listen for this event before loading. */
+        document.dispatchEvent(new CustomEvent('cookieconsent', { detail: c }));
+        if (banner) banner.hidden = true;
+        closeCookieModal();
+    }
+    function openCookieModal() {
+        if (!modal) return;
+        var c = readConsent() || {};
+        if (optAnalytics) optAnalytics.checked = !!c.analytics;
+        if (optMarketing) optMarketing.checked = !!c.marketing;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+    function closeCookieModal() {
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    var existing = readConsent();
+    if (banner && !existing) {
+        /* wait for the page loader to finish before interrupting */
+        setTimeout(function () { banner.hidden = false; }, 1800);
+    } else if (existing) {
+        document.dispatchEvent(new CustomEvent('cookieconsent', { detail: existing }));
+    }
+
+    function on(id, fn) { var el = $(id); if (el) el.addEventListener('click', fn); }
+    on('#sfCookieAccept', function () { saveConsent(true, true); });
+    on('#sfCookieReject', function () { saveConsent(false, false); });
+    on('#sfCookieSettings', function () { openCookieModal(); });
+    on('#sfCookieSettingsBtn', function () { openCookieModal(); });
+    on('#sfCookieSave', function () { saveConsent(optAnalytics && optAnalytics.checked, optMarketing && optMarketing.checked); });
+    on('#sfCookieAcceptAll', function () { saveConsent(true, true); });
+    if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) closeCookieModal(); });
+
+    /* ---------------- ESC closes everything ---------------- */
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        closeAcc();
+        closeWish();
+        closeCookieModal();
+    });
+})();
+
+ </script>
 </body>
-</html> 
+</html>
