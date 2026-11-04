@@ -173,6 +173,22 @@
   .sf-cookie-actions button{flex:1}
 }
 
+/* ---------- layout + image fitting safeguards ---------- */
+.sf-wrap,.sf-promo,.sf-cat-grid,.sf-na-grid,.sf-reviews-grid,.sf-trust,.sf-footer-extra{box-sizing:border-box;max-width:100%}
+.sf-promo,.sf-trust,.sf-studio,.sf-footer-extra{position:static;min-height:0;height:auto;float:none}
+.sf-cat-card,.sf-na-img{background:#111}
+.sf-cat-card img,.sf-na-img img,.sf-promo-art img{display:block;width:100%;height:100%;max-width:100%;object-fit:cover;object-position:center top}
+.sf-promo-art{align-items:stretch}
+.sf-promo-art img{height:auto;aspect-ratio:3/4}
+.sf-wish-row img{display:block;width:64px;height:80px;flex:none;object-fit:cover;object-position:center top}
+.studio-tile img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
+.sf-legal{position:static;transform:none;width:auto;background:none;padding:0;border:0}
+@media(max-width:600px){
+  .sf-promo{margin:0 16px}
+  .sf-trust{grid-template-columns:1fr}
+  .sf-wish-btn{width:32px;height:32px;top:8px;right:8px}
+}
+
     </style>
 </head>
 <body>
@@ -989,12 +1005,12 @@
                 <span class="sf-pay">PAYFAST</span>
                 <span class="sf-pay">PAYPAL</span>
             </div>
-            <nav class="sf-legal" aria-label="Legal">
+            <div class="sf-legal" role="navigation" aria-label="Legal">
                 <a href="terms.html">Terms &amp; Conditions</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="refund-policy.html">Refund &amp; Cancellation Policy</a>
                 <button type="button" id="sfCookieSettingsBtn">Cookie Settings</button>
-            </nav>
+            </div>
         </div>
 
         <div class="footer-bottom">
@@ -1065,14 +1081,14 @@
 
 <!-- WISHLIST DRAWER -->
 <div class="sf-wish-overlay" id="wishlist" aria-hidden="true">
-    <aside class="sf-wish-panel" role="dialog" aria-label="Your wishlist">
+    <div class="sf-wish-panel" role="dialog" aria-label="Your wishlist">
         <div class="sf-wish-head">
             <h4>YOUR WISHLIST</h4>
             <button type="button" class="sf-wish-close" id="sfWishClose" aria-label="Close wishlist">&times;</button>
         </div>
         <div class="sf-wish-list" id="sfWishList"></div>
         <div class="sf-wish-foot">SAVED ON THIS DEVICE</div>
-    </aside>
+    </div>
 </div>
 
 <!-- COOKIE CONSENT -->
