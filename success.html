@@ -583,22 +583,9 @@
         if (good) {
             try { localStorage.removeItem('discreteCart'); localStorage.removeItem('discrete_cart_summary'); localStorage.removeItem('discrete_cart_total'); } catch (e) {}
             if (typeof updateCartCount === 'function') updateCartCount();
-            markComplete();
         }
     }
 
-    // Tell the server this order is awaiting confirmation, once per order.
-    function markComplete() {
-        if (!orderId) return;
-        const key = 'discrete_completed_' + orderId;
-        try { if (localStorage.getItem(key)) return; } catch (e) {}
-        fetch('/api/complete-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId })
-        }).then(r => { if (r && r.ok) { try { localStorage.setItem(key, '1'); } catch (e) {} } })
-          .catch(err => console.warn('[DISCRETE] complete-order call failed:', err));
-    }
 
     // ── Ask the server for the REAL payment status (set by PayFast's server-to-server ITN) ──
     async function verify(attempt) {

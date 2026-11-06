@@ -11,6 +11,22 @@
 
 import crypto from 'crypto';
 
+// Customers shop on the custom domain; override with the SITE_URL env var if it changes.
+const SITE_URL = (process.env.SITE_URL || 'https://www.discreteclothing.co.za').replace(/\/$/, '');
+
+// PayFast signs with PHP's urlencode(): uppercase hex, '+' for spaces, and it ALSO escapes
+// ! ' ( ) * ~  (encodeURIComponent does not). Without this, an ITN containing an apostrophe
+// (e.g. a store called "St George's") fails signature verification and the order never completes.
+const pfEncode = (v) =>
+  encodeURIComponent(String(v ?? ''))
+    .replace(/[!'()*~]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+    .replace(/%20/g, '+');
+
+// Customer-controlled text goes into an HTML email, so escape it.
+const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = (x) => Number.isFinite(x) ? x.toFixed(2) : '?';
+
 // PayFast's published live IP ranges, in CIDR form:
 //   197.97.145.144-159   → /28
 //   41.74.179.192-223    → /27
@@ -64,11 +80,11 @@ export default async function handler(req, res) {
 
     const paramString = Object.keys(data)
       .filter(k => k !== 'signature')
-      .map(k => `${k}=${encodeURIComponent(data[k]).replace(/%20/g, '+')}`)
+      .map(k => `${k}=${pfEncode(data[k])}`)
       .join('&');
 
     const stringToHash = passphrase
-      ? `${paramString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
+      ? `${paramString}&passphrase=${pfEncode(passphrase)}`
       : paramString;
 
     const expectedSignature = crypto.createHash('md5').update(stringToHash).digest('hex');
@@ -95,12 +111,14 @@ export default async function handler(req, res) {
     const nameFirst    = data['name_first'];
     const nameLast     = data['name_last'];
     const emailAddress = data['email_address'];
-    const customStr1   = data['custom_str1'];  // street address
+    const customStr1   = data['custom_str1'];  // PEP PAXI collection point
     const customStr2   = data['custom_str2'];  // city, province, postal
 
     // ── 5. Persist the paid status to Firestore via /api/orders ───────
+    let orderUpdated = false;
+    let orderStatusAfter = null;
     try {
-      const updateRes = await fetch('https://discrete-silk.vercel.app/api/orders', {
+      const updateRes = await fetch(`${SITE_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,6 +136,9 @@ export default async function handler(req, res) {
       });
       if (!updateRes.ok) {
         console.error(`[DISCRETE] Order update failed for ${mPaymentId}: ${updateRes.status}`);
+      } else {
+        orderUpdated = true;
+        try { orderStatusAfter = (await updateRes.json()).status || null; } catch { /* ignore */ }
       }
     } catch (err) {
       console.error('[DISCRETE] Error calling /api/orders:', err);
@@ -130,14 +151,28 @@ export default async function handler(req, res) {
     console.log(`Order ID:     ${mPaymentId}`);
     console.log(`PayFast ID:   ${pfPaymentId}`);
     console.log(`Customer:     ${nameFirst} ${nameLast} <${emailAddress}>`);
-    console.log(`Amount paid:  R${amountGross.toFixed(2)}`);
-    console.log(`PayFast fee:  R${amountFee.toFixed(2)}`);
-    console.log(`You receive:  R${amountNet.toFixed(2)}`);
+    console.log(`Amount paid:  R${money(amountGross)}`);
+    console.log(`PayFast fee:  R${money(amountFee)}`);
+    console.log(`You receive:  R${money(amountNet)}`);
     console.log(`Items:        ${itemDesc}`);
-    console.log(`Ship to:      ${customStr1}, ${customStr2}`);
+    console.log(`Collect at:   ${customStr1}, ${customStr2}`);
+    console.log(`Order record updated: ${orderUpdated}${orderStatusAfter ? ' (status: ' + orderStatusAfter + ')' : ''}`);
     console.log('═══════════════════════════════════════════════');
 
     // ── 7. Email alert via Resend ──────────────────────────────────────
+    // The email always goes out (money has been received), but it shouts if the order
+    // record could not be updated or the amount paid did not match the order total.
+    const warnings = [];
+    if (!orderUpdated) {
+      warnings.push(`ACTION NEEDED: payment was received but the order record could not be updated automatically. Mark order ${escapeHtml(mPaymentId)} as paid manually.`);
+    }
+    if (orderStatusAfter === 'review') {
+      warnings.push(`CHECK AMOUNT: the amount paid (R${money(amountGross)}) did not match the order total. The order was flagged "review" instead of "complete".`);
+    }
+    const warningHtml = warnings.map(w =>
+      `<p style="background:#fff3cd;border:1px solid #e0c36a;padding:10px 12px;"><strong>${w}</strong></p>`).join('');
+    const subjectPrefix = warnings.length ? '[ACTION NEEDED] ' : '';
+
     try {
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -148,16 +183,17 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           from: 'DISCRETE Orders <onboarding@resend.dev>',
           to: process.env.STORE_EMAIL,
-          subject: `[DISCRETE] New Order ${mPaymentId} — R${amountGross.toFixed(2)} — ${nameFirst} ${nameLast}`,
+          subject: `${subjectPrefix}[DISCRETE] New Order ${mPaymentId} — R${money(amountGross)} — ${nameFirst} ${nameLast}`.replace(/[\r\n]+/g, ' '),
           html: `
+            ${warningHtml}
             <h2>New paid order</h2>
-            <p><strong>Order:</strong> ${mPaymentId}</p>
-            <p><strong>Customer:</strong> ${nameFirst} ${nameLast} (${emailAddress})</p>
-            <p><strong>Amount paid:</strong> R${amountGross.toFixed(2)}</p>
-            <p><strong>You receive:</strong> R${amountNet.toFixed(2)}</p>
-            <p><strong>Items:</strong> ${itemDesc}</p>
-            <p><strong>Ship to:</strong> ${customStr1}, ${customStr2}</p>
-            <p><strong>PayFast ID:</strong> ${pfPaymentId}</p>
+            <p><strong>Order:</strong> ${escapeHtml(mPaymentId)}</p>
+            <p><strong>Customer:</strong> ${escapeHtml(nameFirst)} ${escapeHtml(nameLast)} (${escapeHtml(emailAddress)})</p>
+            <p><strong>Amount paid:</strong> R${money(amountGross)}</p>
+            <p><strong>You receive:</strong> R${money(amountNet)}</p>
+            <p><strong>Items:</strong> ${escapeHtml(itemDesc)}</p>
+            <p><strong>Collect at / ship to:</strong> ${escapeHtml(customStr1)}, ${escapeHtml(customStr2)}</p>
+            <p><strong>PayFast ID:</strong> ${escapeHtml(pfPaymentId)}</p>
           `,
         }),
       });

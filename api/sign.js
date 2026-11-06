@@ -12,6 +12,8 @@
  * The payment amount is NEVER trusted from the browser — it's always
  * recomputed here from the cart's item names against the server-side
  * price table in lib/products.js.
+ *
+ * OPTIONAL ENV VAR:  SITE_URL  (defaults to https://www.discreteclothing.co.za)
  */
 
 import crypto from 'crypto';
@@ -21,10 +23,24 @@ import { computeOrderTotal } from '../lib/products.js';
 const MERCHANT_ID  = process.env.PAYFAST_MERCHANT_ID;
 const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY;
 
-// ── FALLBACK URLS (can also be moved to env vars if needed) ──
-const RETURN_URL   = 'https://discrete-silk.vercel.app/payment-success.html';
-const CANCEL_URL   = 'https://discrete-silk.vercel.app/checkout.html';
-const NOTIFY_URL   = 'https://discrete-silk.vercel.app/api/notify';
+// ── SITE URLS ──
+// Customers shop on the custom domain, so PayFast must send them BACK to that same
+// domain. Browser storage is per-domain: if they returned to the *.vercel.app address,
+// the order details saved by checkout.html would not be there.
+// Override with the SITE_URL env var in Vercel if the domain ever changes.
+const SITE_URL     = (process.env.SITE_URL || 'https://www.discreteclothing.co.za').replace(/\/$/, '');
+const RETURN_URL   = `${SITE_URL}/success.html`;
+const CANCEL_URL   = `${SITE_URL}/cancel.html`;
+const NOTIFY_URL   = `${SITE_URL}/api/notify`;
+
+// PayFast builds its signature with PHP's urlencode(): uppercase hex, spaces as '+',
+// and it ALSO escapes  ! ' ( ) * ~  which encodeURIComponent leaves alone. Without this,
+// any name/address containing an apostrophe or bracket (O'Brien, St George's Mall, "(Shop 4)")
+// produces a signature PayFast rejects.
+const pfEncode = (v) =>
+  encodeURIComponent(String(v).trim())
+    .replace(/[!'()*~]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+    .replace(/%20/g, '+');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://discrete-silk.vercel.app');
@@ -45,6 +61,9 @@ export default async function handler(req, res) {
 
     if (!nameFirst || !nameLast || !email || !orderId) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (!/^[A-Za-z0-9_-]{3,40}$/.test(String(orderId))) {
+      return res.status(400).json({ error: 'Invalid order id' });
     }
 
     // Attach the order ID to the return URL as a query param, so
@@ -76,17 +95,19 @@ export default async function handler(req, res) {
       custom_str2:      (addrCity || '').substring(0, 255),
     };
 
+    // Trim every value (PayFast trims before signing, so we must sign the trimmed text we send)
     Object.keys(fields).forEach(k => {
+      if (fields[k] != null) fields[k] = String(fields[k]).trim();
       if (fields[k] === '' || fields[k] == null) delete fields[k];
     });
 
     const passphrase = process.env.PAYFAST_PASSPHRASE || '';
     const paramString = Object.keys(fields)
-      .map(k => `${k}=${encodeURIComponent(fields[k]).replace(/%20/g, '+')}`)
+      .map(k => `${k}=${pfEncode(fields[k])}`)
       .join('&');
 
     const stringToHash = passphrase
-      ? `${paramString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
+      ? `${paramString}&passphrase=${pfEncode(passphrase)}`
       : paramString;
 
     const signature = crypto.createHash('md5').update(stringToHash).digest('hex');
