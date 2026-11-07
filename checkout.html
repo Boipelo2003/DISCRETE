@@ -133,6 +133,7 @@
             background: #eceae6; border: 1px solid #e0ddd8;
         }
         .oi-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+        .oi-sku { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'DM Mono', monospace; font-size: 11px; color: #888; letter-spacing: .06em; }
         .oi-qty {
             position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px;
             border-radius: 9px; background: #0a0a0a; color: #fff;
@@ -259,6 +260,25 @@
         .btn-row .co-btn-ghost { flex: 0 0 110px; }
         .btn-row .co-btn { flex: 1; }
 
+        /* ── DELIVERY OPTIONS ── */
+        .dopts { display: grid; gap: 8px; margin-bottom: 14px; }
+        .dopt {
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer;
+            border: 1px solid #e0ddd8; background: #fff; transition: border .15s, background .15s;
+        }
+        .dopt:hover { border-color: #0a0a0a; }
+        .dopt.sel { border-color: #0a0a0a; background: #fafaf9; box-shadow: inset 0 0 0 1px #0a0a0a; }
+        .dopt input { width: 16px; height: 16px; accent-color: #0a0a0a; flex: none; }
+        .dopt-main { flex: 1; min-width: 0; }
+        .dopt-main strong { display: block; font-size: 13px; }
+        .dopt-main span { font-size: 12px; color: #666; }
+        .dopt-fee { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; white-space: nowrap; }
+        .dopt-note { font-size: 12px; color: #666; padding: 12px 0; line-height: 1.6; }
+        .dopt-retry {
+            margin-left: 8px; background: none; border: 0; padding: 0; cursor: pointer;
+            font: 700 12px 'DM Sans', sans-serif; text-decoration: underline; color: #0a0a0a;
+        }
+
         /* ── MINIMAL FOOTER ── */
         .footer-legal {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px;
@@ -353,6 +373,7 @@
 
             <div id="errBox" class="err-box" role="alert"></div>
             <div id="emptyBanner" class="empty-banner" hidden>Your cart is empty. <a href="index.html">Continue shopping</a> to add something first.</div>
+            <div id="cartWarn" class="empty-banner" hidden></div>
 
             <!-- PANEL 1: INFORMATION -->
             <div class="co-panel active" id="pan1">
@@ -433,7 +454,9 @@
                         <span class="ferr" id="e-postalCode"></span>
                     </div>
                 </div>
-                <p class="eta"><strong>Estimated delivery:</strong> we pack your order within 1–2 business days of confirmed payment, then PEP PAXI Standard takes 7–9 business days to reach your chosen store.</p>
+                <div class="co-label">Delivery Method</div>
+                <div class="dopts" id="deliveryOptions" role="radiogroup" aria-label="Delivery method"><div class="dopt-note">Calculating delivery…</div></div>
+                <p class="eta" id="etaText">We pack your order within 1–2 business days of confirmed payment, then PEP PAXI delivers it to your chosen store.</p>
                 <div class="btn-row">
                     <button class="co-btn-ghost" id="backBtn1">← Back</button>
                     <button class="co-btn" id="nextBtn2">Review Order →</button>
@@ -451,6 +474,10 @@
                     <div class="recap-block">
                         <div class="recap-head"><span>Collection point (PEP PAXI)</span><button type="button" class="recap-edit" data-go="1">Edit</button></div>
                         <div class="recap-body" id="rcCollect"></div>
+                    </div>
+                    <div class="recap-block">
+                        <div class="recap-head"><span>Delivery</span><button type="button" class="recap-edit" data-go="1">Edit</button></div>
+                        <div class="recap-body" id="rcDelivery"></div>
                     </div>
                 </div>
 
@@ -478,7 +505,7 @@
                 <div class="pol-wrap">
                     <details class="pol">
                         <summary>Delivery</summary>
-                        <div class="pol-body">PEP PAXI store-to-store. We pack within 1–2 business days of confirmed payment. You'll get an SMS collection code and collect with your ID document. <a href="shipping.html" target="_blank" rel="noopener noreferrer">Shipping details</a></div>
+                        <div class="pol-body">PEP PAXI store-to-store: Standard (7–9 business days) or Express (3–5 business days), chosen above. We pack within 1–2 business days of confirmed payment. You'll get an SMS collection code and collect with your ID document. <a href="shipping.html" target="_blank" rel="noopener noreferrer">Shipping details</a></div>
                     </details>
                     <details class="pol">
                         <summary>Returns &amp; exchanges</summary>
@@ -519,7 +546,8 @@
                 <div class="oi-list" id="oiList"></div>
                 <div class="totals">
                     <div class="tot-row"><span>Subtotal</span><span class="tot-val" id="subDisp">R0.00</span></div>
-                    <div class="tot-row"><span>Delivery (PEP PAXI)</span><span class="tot-val" id="shipDisp">R0.00</span></div>
+                    <div class="tot-row"><span id="shipLabel">Delivery (PEP PAXI)</span><span class="tot-val" id="shipDisp">R0.00</span></div>
+                    <div class="tot-row sub-note" id="bagRow" hidden><span id="bagNote"></span><span></span></div>
                     <div class="tot-row grand"><span>Total</span><span class="tot-val" id="grandDisp">R0.00</span></div>
                     <div class="tot-row sub-note" id="vatRow"><span>Includes VAT (15%)</span><span class="tot-val" id="vatDisp">R0.00</span></div>
                 </div>
@@ -575,10 +603,9 @@
 (function () {
     'use strict';
 
-    // !! MUST match the delivery fee that api/sign.js adds to the PayFast amount. !!
-    // If you change this number here, change it on the server too, or the total
-    // shown to the customer will not match what PayFast charges.
-    const SHIP = 100;
+    // The server (api/quote.js, using lib/products.js) decides prices AND delivery fees.
+    // This page only DISPLAYS what the server says, so the total shown always equals
+    // what PayFast is asked to charge.
 
     // Only show a VAT line if DISCRETE is VAT-registered. Turn this on together with
     // BUSINESS.vatNumber in success.html so the checkout and the invoice always agree.
@@ -610,6 +637,13 @@
     })();
     let groupedCart = {};
     let grandTotal = 0;
+    let clientSub = 0;
+
+    // Server quote state
+    let quote = null;                  // { merchandise, bag, options:[{id,label,eta,fee,total}] }
+    let quoteState = 'idle';           // idle | loading | ok | error | invalid
+    let selectedDelivery = 'standard';
+    let priceMismatch = false;
 
     const $ = id => document.getElementById(id);
     const steps = [$('stp1'), $('stp2'), $('stp3')];
@@ -618,8 +652,14 @@
     const placeBtn = $('placeBtn');
     let currentStep = 0;
 
-    const money = n => 'R' + n.toFixed(2);
-    const payLabel = () => grandTotal > 0 ? 'Pay ' + money(grandTotal) + ' securely' : 'Place Order';
+    const money = n => 'R' + Number(n).toFixed(2);
+    const payLabel = () => grandTotal > 0 ? 'Pay ' + money(grandTotal) + ' securely' : 'Pay securely';
+    const selectedOption = () => (quote && quote.options.find(o => o.id === selectedDelivery)) || null;
+    const bagText = () => {
+        if (!quote) return '';
+        const n = quote.bag.count;
+        return (n > 1 ? n + ' × ' : '') + (quote.bag.size === 'large' ? 'Large' : 'Standard') + (n > 1 ? ' bags' : ' bag');
+    };
 
     // ── Step navigation ──
     function goTo(n) {
@@ -703,17 +743,32 @@
     });
     $('backBtn1').addEventListener('click', () => goTo(0));
     $('nextBtn2').addEventListener('click', () => {
-        if (checkGroup(['address', 'city', 'province', 'postalCode'])) goTo(2);
+        if (!checkGroup(['address', 'city', 'province', 'postalCode'])) return;
+        if (!readyToPay(true)) return;
+        goTo(2);
     });
     $('backBtn2').addEventListener('click', () => goTo(1));
+
+    // Can the customer move on / pay? (the server must have priced the cart, and prices must agree)
+    function readyToPay(showMessage) {
+        let msg = '';
+        if (quoteState === 'loading') msg = 'Still calculating delivery. One moment…';
+        else if (quoteState === 'invalid') msg = "We couldn't price one of the items in your cart. Message us on WhatsApp and we'll sort it out.";
+        else if (quoteState !== 'ok') msg = "We couldn't calculate delivery just now. Tap \"Try again\" under Delivery Method.";
+        else if (priceMismatch) msg = 'Some prices in your cart are out of date. Please clear your cart and add the items again.';
+        if (msg && showMessage) showErr(msg);
+        return !msg;
+    }
 
     function fillRecap() {
         $('rcContact').textContent = v('firstName') + ' ' + v('lastName') + '\n' + v('email') + '\n' + v('phone');
         const area = v('address2');
         $('rcCollect').textContent = v('address') + (area ? '\n' + area : '') + '\n' + v('city') + ', ' + v('province') + ' ' + v('postalCode');
+        const opt = selectedOption();
+        $('rcDelivery').textContent = opt ? opt.label + '\n' + opt.eta + ' after dispatch\n' + money(opt.fee) + ' · ' + bagText() : '';
     }
 
-    // ── Order summary (always visible) ──
+    // ── Cart lines in the sidebar (prices shown per line come from the cart; TOTALS come from the server) ──
     function thumbFor(item) {
         const own = item.image || item.img || item.thumbnail;
         if (typeof own === 'string' && /^[\w\-\/\.]+$/.test(own)) return own;
@@ -723,19 +778,7 @@
         return set[String(item.color || '').toLowerCase()] || set._ || '';
     }
 
-    function setTotals(sub, ship) {
-        const grand = sub + ship;
-        grandTotal = grand;
-        $('subDisp').textContent = money(sub);
-        $('shipDisp').textContent = money(ship);
-        $('grandDisp').textContent = money(grand);
-        $('asideTotal').textContent = money(grand);
-        $('vatRow').style.display = SHOW_VAT ? '' : 'none';
-        $('vatDisp').textContent = money(grand * VAT_RATE / (1 + VAT_RATE));
-        placeBtn.textContent = payLabel();
-    }
-
-    function renderSummary() {
+    function renderItems() {
         const list = $('oiList');
         groupedCart = {};
         cart.forEach(item => {
@@ -744,23 +787,21 @@
             else groupedCart[key] = { ...item, qty: 1 };
         });
         const items = Object.values(groupedCart);
+        clientSub = 0;
 
         if (!items.length) {
             list.innerHTML = '<div class="oi-empty">Your cart is empty.</div>';
             $('emptyBanner').hidden = false;
-            setTotals(0, 0);
-            ['nextBtn1', 'nextBtn2', 'placeBtn'].forEach(id => { $(id).disabled = true; });
             return;
         }
-
-        let sub = 0, html = '';
+        let html = '';
         items.forEach(item => {
-            const p = parseFloat(item.price);
-            const tot = p * item.qty;
-            sub += tot;
+            const tot = parseFloat(item.price) * item.qty;
+            clientSub += tot;
             const color = item.color ? ' · ' + h(item.color.charAt(0).toUpperCase() + item.color.slice(1)) : '';
             const src = thumbFor(item);
-            const img = src ? `<img src="${h(src)}" alt="" loading="lazy">` : '';
+            const skuM = String(item.name || '').match(/^(D\d+)/i);
+            const img = src ? `<img src="${h(src)}" alt="" loading="lazy">` : (skuM ? `<span class="oi-sku">${h(skuM[1].toUpperCase())}</span>` : '');
             html += `<div class="oi">
                 <div class="oi-thumb">${img}<span class="oi-qty">${item.qty}</span></div>
                 <div class="oi-info">
@@ -772,7 +813,133 @@
         });
         list.innerHTML = html;
         list.querySelectorAll('.oi-thumb img').forEach(im => im.addEventListener('error', () => im.remove()));
-        setTotals(sub, SHIP);
+    }
+
+    // ── Totals (from the server quote) ──
+    function renderTotals() {
+        const opt = selectedOption();
+        const ok = quoteState === 'ok' && opt;
+        $('subDisp').textContent = money(ok ? quote.merchandise : clientSub);
+
+        if (!cart.length) {
+            $('shipLabel').textContent = 'Delivery (PEP PAXI)';
+            $('shipDisp').textContent = money(0);
+            $('grandDisp').textContent = money(0);
+            $('bagRow').hidden = true;
+            grandTotal = 0;
+        } else if (ok) {
+            $('shipLabel').textContent = 'Delivery (' + opt.label + ')';
+            $('shipDisp').textContent = money(opt.fee);
+            $('grandDisp').textContent = money(opt.total);
+            $('bagNote').textContent = bagText() + ' · ' + opt.eta;
+            $('bagRow').hidden = false;
+            grandTotal = priceMismatch ? 0 : opt.total;
+        } else if (quoteState === 'loading' || quoteState === 'idle') {
+            $('shipLabel').textContent = 'Delivery (PEP PAXI)';
+            $('shipDisp').textContent = 'Calculating…';
+            $('grandDisp').textContent = money(clientSub);
+            $('bagRow').hidden = true;
+            grandTotal = 0;
+        } else {
+            $('shipLabel').textContent = 'Delivery (PEP PAXI)';
+            $('shipDisp').textContent = '—';
+            $('grandDisp').textContent = '—';
+            $('bagRow').hidden = true;
+            grandTotal = 0;
+        }
+        $('asideTotal').textContent = $('grandDisp').textContent;
+        $('vatRow').style.display = SHOW_VAT && ok ? '' : 'none';
+        $('vatDisp').textContent = money(grandTotal * VAT_RATE / (1 + VAT_RATE));
+        placeBtn.textContent = payLabel();
+        const dead = !cart.length;
+        $('nextBtn1').disabled = dead;
+        $('nextBtn2').disabled = dead;
+        placeBtn.disabled = dead || !(grandTotal > 0);
+    }
+
+    function renderOptions() {
+        const box = $('deliveryOptions');
+        box.textContent = '';
+        const note = (text, withRetry) => {
+            const d = document.createElement('div');
+            d.className = 'dopt-note';
+            d.textContent = text;
+            if (withRetry) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'dopt-retry'; b.textContent = 'Try again';
+                b.addEventListener('click', loadQuote);
+                d.appendChild(b);
+            }
+            box.appendChild(d);
+        };
+        if (!cart.length) return note('Add something to your cart to see delivery options.', false);
+        if (quoteState === 'loading' || quoteState === 'idle') return note('Calculating delivery…', false);
+        if (quoteState === 'invalid') return note("We couldn't price one of the items in your cart.", false);
+        if (quoteState !== 'ok') return note("We couldn't calculate delivery just now.", true);
+
+        quote.options.forEach(o => {
+            const lab = document.createElement('label');
+            lab.className = 'dopt' + (o.id === selectedDelivery ? ' sel' : '');
+            const inp = document.createElement('input');
+            inp.type = 'radio'; inp.name = 'delivery'; inp.value = o.id; inp.checked = o.id === selectedDelivery;
+            inp.addEventListener('change', () => {
+                selectedDelivery = o.id;
+                renderOptions(); renderTotals(); updateEta();
+            });
+            const main = document.createElement('div');
+            main.className = 'dopt-main';
+            const s1 = document.createElement('strong'); s1.textContent = o.label;
+            const s2 = document.createElement('span'); s2.textContent = o.eta + ' after dispatch';
+            main.appendChild(s1); main.appendChild(s2);
+            const fee = document.createElement('div');
+            fee.className = 'dopt-fee'; fee.textContent = money(o.fee);
+            lab.appendChild(inp); lab.appendChild(main); lab.appendChild(fee);
+            box.appendChild(lab);
+        });
+    }
+
+    function updateEta() {
+        const opt = selectedOption();
+        $('etaText').textContent = opt
+            ? 'We pack your order within 1–2 business days of confirmed payment, then ' + opt.label + ' takes ' + opt.eta + ' to reach your chosen store. Your parcel ships in a ' + bagText().toLowerCase() + '.'
+            : 'We pack your order within 1–2 business days of confirmed payment, then PEP PAXI delivers it to your chosen store.';
+    }
+
+    function checkPrices() {
+        const warn = $('cartWarn');
+        priceMismatch = quoteState === 'ok' && Math.abs(quote.merchandise - clientSub) > 0.009;
+        if (priceMismatch) {
+            warn.textContent = 'Some prices in your cart are out of date. Please clear your cart and add the items again. ';
+            const a = document.createElement('a'); a.href = 'index.html'; a.textContent = 'Back to the shop';
+            warn.appendChild(a);
+        }
+        warn.hidden = !priceMismatch;
+    }
+
+    // ── Ask the server what this cart costs ──
+    async function loadQuote() {
+        if (!cart.length) { quoteState = 'idle'; return; }
+        quoteState = 'loading';
+        renderOptions(); renderTotals();
+        try {
+            const res = await fetch('/api/quote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: cart })
+            });
+            if (res.status === 400) { quote = null; quoteState = 'invalid'; }
+            else {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (!data || !Array.isArray(data.options) || !data.options.length) throw new Error('bad quote');
+                quote = data; quoteState = 'ok';
+                if (!quote.options.some(o => o.id === selectedDelivery)) selectedDelivery = quote.options[0].id;
+            }
+        } catch (err) {
+            console.warn('[DISCRETE] Could not get delivery quote:', err);
+            quote = null; quoteState = 'error';
+        }
+        checkPrices(); renderOptions(); renderTotals(); updateEta();
     }
 
     // Mobile: collapsible summary
@@ -782,18 +949,20 @@
         $('asideToggleText').textContent = open ? 'Hide order summary' : 'Show order summary';
     });
 
-    renderSummary();
+    renderItems();
+    renderTotals();
+    renderOptions();
+    loadQuote();
 
     // ── Place order (with retries) ──
     placeBtn.addEventListener('click', async () => {
-        const amount = grandTotal;
-        if (!amount || amount <= 0) {
-            showErr('Your cart is empty. Add items before checking out.');
-            return;
-        }
-        // Re-check everything in case a step was skipped
+        if (!cart.length) { showErr('Your cart is empty. Add items before checking out.'); return; }
         if (!checkGroup(['firstName', 'lastName', 'email', 'phone'])) { goTo(0); return; }
         if (!checkGroup(['address', 'city', 'province', 'postalCode'])) { goTo(1); return; }
+        if (!readyToPay(true)) return;
+        const opt = selectedOption();
+        const amount = grandTotal;
+        if (!opt || !(amount > 0)) { showErr('Please choose a delivery method.'); return; }
 
         if (!$('termsCheck').checked) {
             $('termsAgreeBox').classList.add('err');
@@ -814,7 +983,7 @@
         const addrCity = v('city') + ', ' + v('province') + ' ' + v('postalCode');
         const orderId = 'DSC-' + Math.floor(100000 + Math.random() * 900000);
 
-        // ── Save pending order (with retries) ──
+        // ── Save pending order (with retries). The server recomputes the total itself. ──
         const maxRetries = 3;
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
@@ -825,7 +994,7 @@
                         id:       orderId,
                         status:   'pending',
                         customer: { firstName: v('firstName'), lastName: v('lastName'), email: v('email'), phone: v('phone') },
-                        shipping: { address: fullAddr, city: v('city'), province: v('province'), postalCode: v('postalCode') },
+                        shipping: { address: fullAddr, city: v('city'), province: v('province'), postalCode: v('postalCode'), method: opt.id },
                         items:    cart,
                         total:    amount,
                         date:     new Date().toISOString()
@@ -851,19 +1020,25 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    nameFirst: v('firstName'),
-                    nameLast:  v('lastName'),
-                    email:     v('email'),
-                    phone:     normPhone,
-                    items:     cart,
-                    itemDesc:  desc,
-                    addrLine:  fullAddr,
-                    addrCity:  addrCity,
-                    orderId:   orderId,
+                    nameFirst:  v('firstName'),
+                    nameLast:   v('lastName'),
+                    email:      v('email'),
+                    phone:      normPhone,
+                    items:      cart,
+                    itemDesc:   desc,
+                    addrLine:   fullAddr,
+                    addrCity:   addrCity,
+                    orderId:    orderId,
+                    shippingId: opt.id,
                 })
             });
             if (!response.ok) throw new Error('Sign request failed');
             const { fields } = await response.json();
+
+            // Safety net: the amount PayFast will charge must equal the total the customer saw.
+            if (Math.abs(parseFloat(fields.amount) - amount) > 0.009) {
+                throw new Error('Amount mismatch: page ' + amount + ' vs server ' + fields.amount);
+            }
 
             const form = $('payfastForm');
             form.innerHTML = '';
@@ -884,7 +1059,7 @@
             localStorage.setItem('discrete_cart_total', String(amount));
 
             // Full structured order details for the success/receipt page
-            // (WhatsApp message + downloadable Tax Invoice PDF).
+            // (WhatsApp message + downloadable invoice PDF).
             const orderDetails = {
                 orderId,
                 date: new Date().toISOString(),
@@ -907,8 +1082,11 @@
                     qty:   item.qty,
                     price: parseFloat(item.price),
                 })),
-                shippingCost: SHIP,
-                total: amount, // VAT-inclusive, matches what PayFast charges
+                shippingCost:   opt.fee,
+                shippingMethod: opt.id,
+                shippingLabel:  opt.label,
+                shippingEta:    opt.eta,
+                total: amount, // matches what PayFast charges
             };
             localStorage.setItem('discrete_last_order', JSON.stringify(orderDetails));
 

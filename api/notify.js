@@ -113,6 +113,7 @@ export default async function handler(req, res) {
     const emailAddress = data['email_address'];
     const customStr1   = data['custom_str1'];  // PEP PAXI collection point
     const customStr2   = data['custom_str2'];  // city, province, postal
+    const customStr3   = data['custom_str3'];  // delivery speed + bag size
 
     // ── 5. Persist the paid status to Firestore via /api/orders ───────
     let orderUpdated = false;
@@ -156,6 +157,7 @@ export default async function handler(req, res) {
     console.log(`You receive:  R${money(amountNet)}`);
     console.log(`Items:        ${itemDesc}`);
     console.log(`Collect at:   ${customStr1}, ${customStr2}`);
+    console.log(`Delivery:     ${customStr3}`);
     console.log(`Order record updated: ${orderUpdated}${orderStatusAfter ? ' (status: ' + orderStatusAfter + ')' : ''}`);
     console.log('═══════════════════════════════════════════════');
 
@@ -193,6 +195,7 @@ export default async function handler(req, res) {
             <p><strong>You receive:</strong> R${money(amountNet)}</p>
             <p><strong>Items:</strong> ${escapeHtml(itemDesc)}</p>
             <p><strong>Collect at / ship to:</strong> ${escapeHtml(customStr1)}, ${escapeHtml(customStr2)}</p>
+            <p><strong>Delivery (buy this PAXI bag):</strong> ${escapeHtml(customStr3 || 'not specified')}</p>
             <p><strong>PayFast ID:</strong> ${escapeHtml(pfPaymentId)}</p>
           `,
         }),

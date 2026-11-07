@@ -28,7 +28,7 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore }                  from 'firebase-admin/firestore';
 import { getAuth }                       from 'firebase-admin/auth';
-import { computeOrderTotal }             from '../lib/products.js';
+import { quoteOrder }                    from '../lib/products.js';
 
 // Any input value meaning "payment went through".
 const PAID_ALIASES = ['paid', 'complete'];
@@ -175,17 +175,22 @@ export default async function handler(req, res) {
         console.log(`[DISCRETE] Order ${id} updated → status: ${update.status || '(unchanged)'}`);
         return res.status(200).json({ ok: true, action: 'updated', status: update.status });
       } else {
-        const computedTotal = computeOrderTotal(items);
-        if (computedTotal === null) {
+        // The total (items + delivery fee) is ALWAYS recomputed on the server.
+        // The delivery speed arrives as shipping.method ('standard' | 'express').
+        const quote = quoteOrder(items, (shipping && shipping.method) || undefined);
+        if (!quote) {
           return res.status(400).json({ error: 'Invalid or unrecognized items in cart' });
         }
         await ref.set({
           id,
           status:    normalizedStatus || 'pending',
           customer:  customer  || {},
-          shipping:  shipping  || {},
+          shipping:  { ...(shipping || {}), method: quote.delivery.id },
           items:     items     || [],
-          total:     computedTotal,
+          total:     quote.total,
+          shippingFee: quote.shippingFee,
+          delivery:  quote.delivery,   // { id, label, eta }
+          bag:       quote.bag,        // { size, count }: which PAXI bag(s) to buy
           date:      date      || new Date().toISOString(),
           createdAt: new Date().toISOString(),
         });

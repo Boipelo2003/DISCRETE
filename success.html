@@ -238,7 +238,7 @@
                 <ol class="conf-steps">
                     <li><strong>Send your order on WhatsApp</strong>Tap the green button below. This is how we know to start packing.</li>
                     <li><strong>We pack your order</strong>Usually within 1–2 business days of confirmed payment.</li>
-                    <li><strong>PEP PAXI delivers to your store</strong>Standard delivery takes 7–9 business days after dispatch.</li>
+                    <li><strong>PEP PAXI delivers to your store</strong><span id="stepEta">Standard delivery takes 7–9 business days after dispatch.</span></li>
                     <li><strong>Collect with your SMS code and ID</strong>PAXI texts a collection code to the cell number you gave us.</li>
                 </ol>
             </div>
@@ -403,6 +403,7 @@
             text:  `${line1}, ${s.city || ''}, ${s.province || ''} ${s.postalCode || ''}`.replace(/\s+,/g, ',').trim()
         };
     }
+    const deliveryLabel = () => (order && order.shippingLabel) ? `Delivery (${order.shippingLabel})` : 'Delivery (PEP PAXI)';
     const custName = () => order ? `${order.customer.firstName} ${order.customer.lastName}`.trim() : '';
     const totals = () => {
         const total = Number(order.total) || 0;
@@ -424,7 +425,7 @@
             if (order.customer.email) m += `*Email:* ${order.customer.email}\n`;
             m += `*${c.label}:* ${c.text}\n\n*Items:*\n`;
             m += order.items.map(i => `• ${i.name}${i.color ? ' ' + cap(i.color) : ''} (${i.size}) × ${i.qty} — ${money(i.price * i.qty)}`).join('\n') + '\n\n';
-            m += `*Delivery (PEP PAXI):* ${money(t.ship)}\n`;
+            m += `*${deliveryLabel()}:* ${money(t.ship)}\n`;
             if (IS_VAT) m += `*Subtotal (excl. VAT):* ${money(t.exVat)}\n*VAT (15%):* ${money(t.vat)}\n`;
             m += `*Total ${paid ? 'Paid' : ''}${IS_VAT ? ' (incl. VAT)' : ''}:* ${money(t.total)}\n\n`;
         } else {
@@ -448,7 +449,7 @@
         if (order) {
             const t = totals();
             order.items.forEach(i => addRow(rows, `${i.name}${i.color ? ' · ' + cap(i.color) : ''} (${i.size}) × ${i.qty}`, money(i.price * i.qty)));
-            addRow(rows, 'Delivery (PEP PAXI)', money(t.ship));
+            addRow(rows, deliveryLabel(), money(t.ship));
             if (IS_VAT) addRow(rows, 'Includes VAT (15%)', money(t.vat), 'muted');
             addRow(rows, state === 'ok' ? 'Total paid' : 'Total', money(t.total), 'total');
             const c = collectionInfo();
@@ -531,7 +532,7 @@
             y += 18;
         };
         row('Merchandise:', money(itemsTotal), false);
-        row('Delivery (PEP PAXI):', money(t.ship), false);
+        row(deliveryLabel() + ':', money(t.ship), false);
         if (IS_VAT) {
             y += 4; doc.line(W - margin - 190, y - 12, W - margin, y - 12);
             row('Subtotal (excl. VAT):', money(t.exVat), false);
@@ -567,6 +568,7 @@
             wa.href = `https://wa.me/${CLIENT_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(state, data))}`;
             $('waBtnText').textContent = 'Send Order via WhatsApp';
             renderReceipt(state, data);
+            if (order && order.shippingEta) $('stepEta').textContent = `${order.shippingLabel || 'PEP PAXI'} takes ${order.shippingEta} after dispatch.`;
             $('stepsBlock').hidden = false;
             $('pdfBtnText').textContent = IS_VAT ? 'Download Tax Invoice (PDF)' : 'Download Invoice (PDF)';
             $('pdfBtn').hidden = !order;

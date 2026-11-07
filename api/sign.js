@@ -10,14 +10,14 @@
  * ╚══════════════════════════════════════════════════════════════════╝
  *
  * The payment amount is NEVER trusted from the browser — it's always
- * recomputed here from the cart's item names against the server-side
- * price table in lib/products.js.
+ * recomputed here (items + delivery fee) from the server-side tables in
+ * lib/products.js.
  *
  * OPTIONAL ENV VAR:  SITE_URL  (defaults to https://www.discreteclothing.co.za)
  */
 
 import crypto from 'crypto';
-import { computeOrderTotal } from '../lib/products.js';
+import { quoteOrder } from '../lib/products.js';
 
 // ── READ FROM ENVIRONMENT VARIABLES ──
 const MERCHANT_ID  = process.env.PAYFAST_MERCHANT_ID;
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { nameFirst, nameLast, email, phone, items, itemDesc, addrLine, addrCity, orderId } = req.body;
+    const { nameFirst, nameLast, email, phone, items, itemDesc, addrLine, addrCity, orderId, shippingId } = req.body;
 
     if (!nameFirst || !nameLast || !email || !orderId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -72,10 +72,13 @@ export default async function handler(req, res) {
     // whatever URL we send here is exactly what it redirects to.
     const returnUrl = `${RETURN_URL}?m_payment_id=${encodeURIComponent(orderId)}`;
 
-    const computedAmount = computeOrderTotal(items);
-    if (computedAmount === null) {
+    // Merchandise AND the delivery fee are both worked out HERE, on the server.
+    // Nothing the browser claims about money is trusted.
+    const quote = quoteOrder(items, shippingId || undefined);
+    if (!quote) {
       return res.status(400).json({ error: 'Invalid or unrecognized items in cart' });
     }
+    const computedAmount = quote.total;
 
     const fields = {
       merchant_id:      MERCHANT_ID,
@@ -93,6 +96,7 @@ export default async function handler(req, res) {
       item_description: (itemDesc || '').substring(0, 255),
       custom_str1:      (addrLine || '').substring(0, 255),
       custom_str2:      (addrCity || '').substring(0, 255),
+      custom_str3:      `${quote.delivery.label} - ${quote.bag.count} x ${quote.bag.size} bag`,
     };
 
     // Trim every value (PayFast trims before signing, so we must sign the trimmed text we send)
